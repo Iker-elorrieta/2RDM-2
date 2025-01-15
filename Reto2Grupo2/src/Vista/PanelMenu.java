@@ -1,6 +1,7 @@
 package Vista;
 
 import javax.swing.JPanel;
+import javax.swing.JButton;
 
 public class PanelMenu extends JPanel {
 
@@ -10,6 +11,11 @@ public class PanelMenu extends JPanel {
 	 * Create the panel.
 	 */
 	public PanelMenu() {
+		setLayout(null);
+		
+		JButton btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.setBounds(26, 328, 109, 21);
+		add(btnDesconectar);
 
 	}
 

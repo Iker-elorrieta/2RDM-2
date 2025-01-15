@@ -8,11 +8,11 @@ import java.util.List;
 
 import Modelo.Users;
 
-public class HiloServidor extends Thread {
+public class HiloConexion extends Thread {
 
 	Socket clienteSocket;
 
-	public HiloServidor(Socket clienteSocket) {
+	public HiloConexion(Socket clienteSocket) {
 		this.clienteSocket = clienteSocket;
 	}
 
