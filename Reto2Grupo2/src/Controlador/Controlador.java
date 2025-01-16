@@ -91,9 +91,13 @@ public class Controlador  implements ActionListener{
 		if (!usuarioIntroducido.isEmpty() && !passIntroducida.isEmpty()) {
 			Users usuario = new Users();
 			usuarioLogeado = usuario.mObtenerUsuario(usuarioIntroducido, passIntroducida);
+			System.out.println(usuarioLogeado);
 			if (usuarioLogeado != null) { 
+				System.out.println("Usuario correcto");
 				
 				//mCargarVentanas(PanelPrincipal.enumAcciones.CARGAR_PANEL_WORKOUT);
+			} else {
+				JOptionPane.showMessageDialog(null, "No se ha encontrado el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Algún campo está vacío", "Error", JOptionPane.ERROR_MESSAGE);
