@@ -78,9 +78,15 @@ public class Controlador  implements ActionListener{
 	
 	
 		//VENTANA OTROS HORARIOS -----------------------------------------------------------------------------------------------
-		
+		this.vistaPrincipal.getPanelOtrosHorarios().getBtnVolver().addActionListener(this);;
+		this.vistaPrincipal.getPanelOtrosHorarios().getBtnVolver()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
 		
 		//VENTANA REUNIONES---------------------------------------------------------------------------------------------------------
+		
+		this.vistaPrincipal.getPanelReuniones().getBtnVolver().addActionListener(this);;
+		this.vistaPrincipal.getPanelReuniones().getBtnVolver()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
 	}
 	
 	public void actionPerformed(ActionEvent e) {
