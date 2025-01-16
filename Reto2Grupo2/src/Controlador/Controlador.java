@@ -2,6 +2,11 @@ package Controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
@@ -15,15 +20,33 @@ public class Controlador  implements ActionListener{
 
 	private Vista.VentanaPrincipal vistaPrincipal;
 	private Users usuarioLogeado;
+	private Socket socketCliente;
+	private ObjectOutputStream oos;
+	private ObjectInputStream ois;
 	
 	public Controlador(VentanaPrincipal ventanaLogin) {
 		// TODO Auto-generated constructor stub
 		this.vistaPrincipal = ventanaLogin;
 		this.vistaPrincipal.setVisible(true);
 		this.inicializarControlador();
+		
 	}
 
 	private void inicializarControlador() {
+		
+		try {
+			socketCliente = new Socket("localhost", 2845);
+			oos = new ObjectOutputStream(socketCliente.getOutputStream());
+			ois = new ObjectInputStream(socketCliente.getInputStream());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		HiloConexion hiloConexion = new HiloConexion(socketCliente);
 
 		// VENTANA LOGIN-------------------------------------------------------------------------------------------------
 		this.vistaPrincipal.getPanelLogin().getBtnLogin().addActionListener(this);;
