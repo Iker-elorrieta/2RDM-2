@@ -3,17 +3,22 @@ package Vista;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class PanelMenu extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JButton btnDesconectar, btnHorario, btnOtrosHorarios, btnReuniones;
+	private JLabel lblMenu;
 
 	/**
 	 * Create the panel.
 	 */
 	public PanelMenu() {
 		setLayout(null);
+		setBounds(100, 100, 707, 584);
+
 
 		btnDesconectar = new JButton("Desconectar");
 		btnDesconectar.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -22,18 +27,24 @@ public class PanelMenu extends JPanel {
 
 		btnHorario = new JButton("Consultar horario");
 		btnHorario.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnHorario.setBounds(148, 100, 249, 30);
+		btnHorario.setBounds(93, 87, 249, 30);
 		add(btnHorario);
 
 		btnOtrosHorarios = new JButton("Consultar otros horarios");
 		btnOtrosHorarios.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnOtrosHorarios.setBounds(148, 153, 249, 30);
+		btnOtrosHorarios.setBounds(93, 139, 249, 30);
 		add(btnOtrosHorarios);
 
 		btnReuniones = new JButton("Ver reuniones");
 		btnReuniones.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnReuniones.setBounds(148, 209, 249, 30);
+		btnReuniones.setBounds(93, 180, 249, 30);
 		add(btnReuniones);
+		
+		lblMenu = new JLabel("MENÚ");
+		lblMenu.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMenu.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblMenu.setBounds(95, 24, 372, 50);
+		add(lblMenu);
 
 	}
 

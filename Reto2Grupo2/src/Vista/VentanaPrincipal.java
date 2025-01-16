@@ -24,7 +24,8 @@ public class VentanaPrincipal extends JFrame {
 		CARGAR_PANEL_MENU, 
 		CARGAR_PANEL_HORARIO, 
 		CARGAR_PANEL_OTROS_HORARIOS,
-		CARGAR_PANEL_REUNIONES
+		CARGAR_PANEL_REUNIONES,
+		DESCONECTAR
 
 	}
 
@@ -128,8 +129,10 @@ public class VentanaPrincipal extends JFrame {
 
 		default:
 			break;
-
+			
 		}
+		panelContenedor.revalidate();
+	    panelContenedor.repaint();
 	}
 
 	public PanelLogin getPanelLogin() {

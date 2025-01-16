@@ -1,6 +1,7 @@
 package Controlador;
 
 import java.io.ObjectOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -18,33 +19,36 @@ public class HiloConexion extends Thread {
 
 	@Override
 	public void run() {
-		boolean continuar = true;
+	    boolean continuar = true;
 
-		try (ObjectOutputStream oos = new ObjectOutputStream(clienteSocket.getOutputStream());
-				ObjectInputStream ois = new ObjectInputStream(clienteSocket.getInputStream())) {
+	    try (ObjectOutputStream oos = new ObjectOutputStream(clienteSocket.getOutputStream());
+	            ObjectInputStream ois = new ObjectInputStream(clienteSocket.getInputStream())) {
 
-			while (continuar) {
-				int accion = (int) ois.readObject();
-
-				switch (accion) {
-				case 1:
-					login(ois, oos);
-					break;
-				case 2:
-					mostrarHorario(ois, oos);
-					break;
-				case 3:
-					mostrarOtrosHorarios(ois, oos);
-					break;
-
-				default:
-					continuar = false;
-					break;
-				}
-			}
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	        while (continuar) {
+	            try {
+	                int accion = (int) ois.readObject();
+	                switch (accion) {
+	                case 1:
+	                    login(ois, oos);
+	                    break;
+	                case 2:
+	                    mostrarHorario(ois, oos);
+	                    break;
+	                case 3:
+	                    mostrarOtrosHorarios(ois, oos);
+	                    break;
+	                default:
+	                    continuar = false;
+	                    break;
+	                }
+	            } catch (EOFException e) {
+	                System.out.println("EOF alcanzado. Cerrando la conexión...");
+	                continuar = false;
+	            }
+	        }
+	    } catch (IOException | ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	private void login(ObjectInputStream ois, ObjectOutputStream oos) {

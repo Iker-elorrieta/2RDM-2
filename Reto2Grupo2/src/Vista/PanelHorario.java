@@ -5,6 +5,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class PanelHorario extends JPanel {
 
@@ -17,16 +19,23 @@ public class PanelHorario extends JPanel {
 	 */
 	public PanelHorario() {
 		setLayout(null);
+		setBounds(100, 100, 707, 584);
 
 		tablaHorario = new JTable();
 		tablaHorario.setModel(generarModeloTabla());
-		tablaHorario.setBounds(39, 72, 436, 200);
+		tablaHorario.setBounds(104, 138, 436, 200);
 		add(tablaHorario);
 
 		btnVolver = new JButton("Volver");
 		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnVolver.setBounds(39, 314, 101, 25);
+		btnVolver.setBounds(106, 360, 101, 25);
 		add(btnVolver);
+		
+		JLabel lblHorario = new JLabel("HORARIO:");
+		lblHorario.setHorizontalAlignment(SwingConstants.CENTER);
+		lblHorario.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblHorario.setBounds(128, 71, 356, 56);
+		add(lblHorario);
 
 	}
 
