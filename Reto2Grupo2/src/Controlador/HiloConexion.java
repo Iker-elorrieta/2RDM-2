@@ -1,6 +1,8 @@
 package Controlador;
 
 import java.io.ObjectOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,12 +23,12 @@ public class HiloConexion extends Thread {
 	public void run() {
 	    boolean continuar = true;
 
-	    try (ObjectOutputStream oos = new ObjectOutputStream(clienteSocket.getOutputStream());
-	            ObjectInputStream ois = new ObjectInputStream(clienteSocket.getInputStream())) {
+	    try (DataOutputStream oos = new DataOutputStream(clienteSocket.getOutputStream());
+	    		DataInputStream ois = new DataInputStream(clienteSocket.getInputStream())) {
 
 	        while (continuar) {
 	            try {
-	                int accion = (int) ois.readObject();
+	                int accion = (int) ois.readInt();
 	                switch (accion) {
 	                case 1:
 	                    login(ois, oos);
@@ -46,43 +48,44 @@ public class HiloConexion extends Thread {
 	                continuar = false;
 	            }
 	        }
-	    } catch (IOException | ClassNotFoundException e) {
+	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	}
 
-	private void login(ObjectInputStream ois, ObjectOutputStream oos) {
+	private void login(DataInputStream ois, DataOutputStream oos) {
 		try {
-			String nombreUser = (String) ois.readObject();
-			String pass = (String) ois.readObject();
+			String nombreUser = (String) ois.readUTF();
+			String pass = (String) ois.readUTF();
 			Users user = new Users().mObtenerUsuario(nombreUser, pass);
-			oos.writeObject(user);
+			oos.writeUTF(user.getNombre());
+			oos.writeUTF(user.getPassword());
 			oos.flush();
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void mostrarHorario(ObjectInputStream ois, ObjectOutputStream oos) {
-		try {
+	private void mostrarHorario(DataInputStream ois, DataOutputStream oos) {
+		/*try {
 			int userId = (int) ois.readObject();
 			String[][] horarioUser = new Users().obtenerHorarioPorId(userId);
 			oos.writeObject(horarioUser);
 			oos.flush();
 		} catch (IOException | ClassNotFoundException ex) {
 			ex.printStackTrace();
-		}
+		}*/
 	}
 
-	private void mostrarOtrosHorarios(ObjectInputStream ois, ObjectOutputStream oos) {
-		try {
+	private void mostrarOtrosHorarios(DataInputStream ois, DataOutputStream oos) {
+		/*try {
 			int userId = (int) ois.readObject();
 			List<Users> listaProfesores = new Users().mObtenerProfesores(userId);
 			oos.writeObject(listaProfesores);
 			oos.flush();
 		} catch (IOException | ClassNotFoundException ex) {
 			ex.printStackTrace();
-		}
+		}*/
 
 	}
 
