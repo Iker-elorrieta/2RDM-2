@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.Font;
 
-public class PanelHorario extends JPanel {
+public class PanelReuniones extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTable tablaHorario;
@@ -15,7 +15,7 @@ public class PanelHorario extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public PanelHorario() {
+	public PanelReuniones() {
 		setLayout(null);
 
 		tablaHorario = new JTable();

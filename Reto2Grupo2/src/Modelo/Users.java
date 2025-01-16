@@ -210,22 +210,17 @@ public class Users implements java.io.Serializable {
 	}
 
 	public Users mObtenerUsuario(String idIntroducido, String passIntroducida) {
-		return null;
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		String hql = "from Users where username = '" + idIntroducido + "' AND password = '" + passIntroducida + "' AND tipos.name = 'profesor' ";
+		Query q = sesion.createQuery(hql);
+		Users user = (Users) q.uniqueResult();
+		if(user != null) {
+			return user; 
+		} else return null;
 		
 	}
 
-	public int comprobarCredenciaales(String nombreUser, String pass) {
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session sesion = sf.openSession();
-		String hql = "from Users where username = '" + nombreUser + "' AND password = '" + pass + "' AND tipos.name = 'profesor' ";
-		Query q = sesion.createQuery(hql);
-		Users userComprobado = (Users) q.uniqueResult();
-		if(userComprobado == null) {
-			return 0;
-		} else {
-			return userComprobado.id;
-		}
-	}
 
 	public String[][] obtenerHorarioPorId(int userId) {
 		String[][] horarioSemanal = {
@@ -251,7 +246,7 @@ public class Users implements java.io.Serializable {
 		return horarioSemanal;
 	}
 
-	public List<Users> obtenerProfesores(int userId) {
+	public List<Users> mObtenerProfesores(int userId) {
 		List<Users> listaProfesores = new ArrayList<Users>();
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();

@@ -15,9 +15,8 @@ import javax.swing.border.EmptyBorder;
 public class PanelLogin extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField textFieldUser;
+	private JTextField tfUser;
 	private JPasswordField pfPass;
-	private JButton btnRegistrarse;
 	private JButton btnLogin;
 	JLabel lblNewLabel;
 
@@ -46,10 +45,10 @@ public class PanelLogin extends JPanel {
 		lblUser.setBounds(176, 203, 80, 20);
 		add(lblUser);
 
-		textFieldUser = new JTextField();
-		textFieldUser.setBounds(280, 200, 200, 30);
-		textFieldUser.setBorder(new EmptyBorder(5, 5, 5, 5));
-		add(textFieldUser);
+		tfUser = new JTextField();
+		tfUser.setBounds(280, 200, 200, 30);
+		tfUser.setBorder(new EmptyBorder(5, 5, 5, 5));
+		add(tfUser);
 
 		JLabel lblPass = new JLabel("Contraseña:");
 		lblPass.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -61,54 +60,29 @@ public class PanelLogin extends JPanel {
 		pfPass.setBorder(new EmptyBorder(5, 5, 5, 5));
 		add(pfPass);
 
-		btnLogin = new JButton("Aceptar");
-		btnLogin.setBounds(220, 310, 100, 40);
+		btnLogin = new JButton("Login");
+		btnLogin.setBounds(220, 310, 243, 40);
 		btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
 		btnLogin.setBackground(new Color(100, 149, 237));
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setBorderPainted(false);
 		btnLogin.setFocusPainted(false);
 		add(btnLogin);
-
-		btnRegistrarse = new JButton("Registrarse");
-		btnRegistrarse.setBounds(350, 310, 120, 40);
-		btnRegistrarse.setFont(new Font("Arial", Font.BOLD, 14));
-		btnRegistrarse.setBackground(new Color(255, 105, 180));
-		btnRegistrarse.setForeground(Color.WHITE);
-		btnRegistrarse.setBorderPainted(false);
-		btnRegistrarse.setFocusPainted(false);
-		add(btnRegistrarse);
 	}
 
-	public JLabel getLblNewLabel() {
-		return lblNewLabel;
+	public JTextField getTfUser() {
+		return tfUser;
 	}
 
-	public void setLblNewLabel(JLabel lblNewLabel) {
-		this.lblNewLabel = lblNewLabel;
+	public void setTfUser(JTextField textFieldUser) {
+		this.tfUser = textFieldUser;
 	}
 
-	public JButton getBtnRegistrarse() {
-		return btnRegistrarse;
-	}
-
-	public void setBtnRegistrarse(JButton btnRegistrarse) {
-		this.btnRegistrarse = btnRegistrarse;
-	}
-
-	public JTextField getTextFieldUser() {
-		return textFieldUser;
-	}
-
-	public void setTextFieldUser(JTextField textFieldUser) {
-		this.textFieldUser = textFieldUser;
-	}
-
-	public JPasswordField getTextFieldPass() {
+	public JPasswordField getPfPass() {
 		return pfPass;
 	}
 
-	public void setTextFieldPass(JPasswordField pfPass) {
+	public void setPfPass(JPasswordField pfPass) {
 		this.pfPass = pfPass;
 	}
 

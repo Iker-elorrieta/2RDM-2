@@ -51,8 +51,8 @@ public class HiloConexion extends Thread {
 		try {
 			String nombreUser = (String) ois.readObject();
 			String pass = (String) ois.readObject();
-			int res = new Users().comprobarCredenciaales(nombreUser, pass);
-			oos.writeObject(res);
+			Users user = new Users().mObtenerUsuario(nombreUser, pass);
+			oos.writeObject(user);
 			oos.flush();
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -73,7 +73,7 @@ public class HiloConexion extends Thread {
 	private void mostrarOtrosHorarios(ObjectInputStream ois, ObjectOutputStream oos) {
 		try {
 			int userId = (int) ois.readObject();
-			List<Users> listaProfesores = new Users().obtenerProfesores(userId);
+			List<Users> listaProfesores = new Users().mObtenerProfesores(userId);
 			oos.writeObject(listaProfesores);
 			oos.flush();
 		} catch (IOException | ClassNotFoundException ex) {

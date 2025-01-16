@@ -2,21 +2,13 @@ package Controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 
 import Modelo.Users;
 import Vista.PanelLogin;
 import Vista.VentanaPrincipal;
 import Vista.VentanaPrincipal.enumAcciones;
-
-
-
-
-
-
 
 
 public class Controlador  implements ActionListener{
@@ -33,13 +25,25 @@ public class Controlador  implements ActionListener{
 
 	private void inicializarControlador() {
 
-		// VENTANA REGISTRO
-
+		// VENTANA LOGIN-------------------------------------------------------------------------------------------------
 		this.vistaPrincipal.getPanelLogin().getBtnLogin().addActionListener(this);;
 		this.vistaPrincipal.getPanelLogin().getBtnLogin()
 				.setActionCommand(VentanaPrincipal.enumAcciones.LOGIN.toString());
 
+		
+		// VENTANA MENU----------------------------------------------------------------------------------------------------
 	
+		
+		//VENTANA HORARIO----------------------------------------------------------------------------------------------
+		this.vistaPrincipal.getPanelHorario().getBtnVolver().addActionListener(this);;
+		this.vistaPrincipal.getPanelHorario().getBtnVolver()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
+	
+	
+		//VENTANA OTROS HORARIOS -----------------------------------------------------------------------------------------------
+		
+		
+		//VENTANA REUNIONES---------------------------------------------------------------------------------------------------------
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -59,8 +63,8 @@ public class Controlador  implements ActionListener{
 	
 	private void mConfirmarLogin(enumAcciones accion) {
 		PanelLogin panelLogin = this.vistaPrincipal.getPanelLogin();
-		String usuarioIntroducido = panelLogin.getTextFieldUser().getText().trim();
-		String passIntroducida = new String(panelLogin.getTextFieldPass().getPassword()).trim();
+		String usuarioIntroducido = panelLogin.getTfUser().getText().trim();
+		String passIntroducida = new String(panelLogin.getPfPass().getPassword()).trim();
 		if (!usuarioIntroducido.isEmpty() && !passIntroducida.isEmpty()) {
 			Users usuario = new Users();
 			usuarioLogeado = usuario.mObtenerUsuario(usuarioIntroducido, passIntroducida);
@@ -71,6 +75,11 @@ public class Controlador  implements ActionListener{
 		} else {
 			JOptionPane.showMessageDialog(null, "Algún campo está vacío", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	
+	private void mMostrarOtrosProfesores() {
+		
 	}
 
 
