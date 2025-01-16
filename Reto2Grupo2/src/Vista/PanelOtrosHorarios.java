@@ -10,8 +10,9 @@ import javax.swing.JScrollPane;
 
 public class PanelOtrosHorarios extends JPanel {
 
+	
 	private static final long serialVersionUID = 1L;
-
+		private JList<String> listProfesores;
 	/**
 	 * Create the panel.
 	 */
@@ -29,9 +30,17 @@ public class PanelOtrosHorarios extends JPanel {
 		scrollPane.setBounds(84, 153, 499, 264);
 		add(scrollPane);
 		
-		JList<String> listProfesores = new JList<String>();
+		listProfesores = new JList<String>();
 		listProfesores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(listProfesores);
+		
+		
 
+	}
+	public JList<String> getListProfesores() {
+		return listProfesores;
+	}
+	public void setListProfesores(JList<String> listProfesores) {
+		this.listProfesores = listProfesores;
 	}
 }
