@@ -4,6 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.JScrollPane;
 
 public class PanelOtrosHorarios extends JPanel {
 
@@ -21,7 +24,14 @@ public class PanelOtrosHorarios extends JPanel {
 		lblOtrosHorarios.setFont(new Font("Tahoma", Font.BOLD, 24));
 		lblOtrosHorarios.setBounds(66, 28, 312, 59);
 		add(lblOtrosHorarios);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(84, 153, 499, 264);
+		add(scrollPane);
+		
+		JList<String> listProfesores = new JList<String>();
+		listProfesores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setViewportView(listProfesores);
 
 	}
-
 }

@@ -129,7 +129,6 @@ public class Controlador  implements ActionListener{
 				this.vistaPrincipal.mVisualizarPaneles(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU);
 				this.vistaPrincipal.getPanelLogin().getTfUser().setText("");
 				this.vistaPrincipal.getPanelLogin().getPfPass().setText("");
-				//mCargarVentanas(PanelPrincipal.enumAcciones.CARGAR_PANEL_WORKOUT);
 			} else {
 				JOptionPane.showMessageDialog(null, "No se ha encontrado el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 			}

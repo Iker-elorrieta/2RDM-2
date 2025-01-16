@@ -57,7 +57,7 @@ public class PanelHorario extends JPanel {
 
 	private DefaultTableModel generarModeloTabla() {
 		DefaultTableModel modeloTabla = new DefaultTableModel(
-				new String[][] { { "8:00-9:00", "", "", "", "", "" }, { "9:00-10:00", "", "", "", "", "" },
+				new String[][] {{"", "L", "M", "X", "J", "V" }, { "8:00-9:00", "", "", "", "", "" }, { "9:00-10:00", "", "", "", "", "" },
 						{ "10:00-11:00", "", "", "", "", "" }, { "11:30-12:30", "", "", "", "", "" },
 						{ "12:30-13:30", "", "", "", "", "" }, { "13:30-14:30", "", "", "", "", "" }, },
 				new String[] { "Hora/Día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" });
