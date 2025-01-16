@@ -52,6 +52,10 @@ public class Controlador  implements ActionListener{
 		this.vistaPrincipal.getPanelLogin().getBtnLogin().addActionListener(this);;
 		this.vistaPrincipal.getPanelLogin().getBtnLogin()
 				.setActionCommand(VentanaPrincipal.enumAcciones.LOGIN.toString());
+		
+		this.vistaPrincipal.getPanelLogin().getBtnCrearUser().addActionListener(this);;
+		this.vistaPrincipal.getPanelLogin().getBtnCrearUser()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CREAR_USUARIO.toString());
 
 		
 		// VENTANA MENU----------------------------------------------------------------------------------------------------
@@ -119,13 +123,16 @@ public class Controlador  implements ActionListener{
 			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_LOGIN);
 			desconectar();
 			break;
-		
+		case CREAR_USUARIO:
+			new Users().mCrearUsuario();
+			break;
 		default:
 			break;
 
 		}
 	}
 	
+
 	private void mConfirmarLogin(enumAcciones accion) {
 		PanelLogin panelLogin = this.vistaPrincipal.getPanelLogin();
 		String usuarioIntroducido = panelLogin.getTfUser().getText().trim();

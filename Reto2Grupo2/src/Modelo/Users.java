@@ -226,39 +226,54 @@ public class Users implements java.io.Serializable {
 	}
 
 	public Users mCrearUsuario() {
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session sesion = sf.openSession();
-		Users user = null;
+	    SessionFactory sf = HibernateUtil.getSessionFactory();
+	    Session sesion = sf.openSession();
+	    Users user = null;
 
-		try {
-			Tipos tipo = new Tipos();
-			tipo.setId(4);
-			tipo.setName("profesor");
-			tipo.setNameEus("irakaslea");
+	    try {
+	        // Iniciar la transacción
+	        sesion.beginTransaction();
 
-			user = new Users();
-			user.setEmail("aaa@a.com");
-			user.setUsername("a");
-			user.setPassword("1");
-			user.setNombre("a");
-			user.setApellidos("AAAA");
-			user.setDni("11111");
-			user.setDireccion("Calle32432");
-			user.setTelefono1(Integer.parseInt("666666666"));
-			user.setTelefono2(Integer.parseInt("22222222"));
-			user.setTipos(tipo);
+	        // Crear un tipo de usuario
+	        Tipos tipo = new Tipos();
+	        tipo.setId(4);
+	        tipo.setName("profesor");
+	        tipo.setNameEus("irakaslea");
 
-			sesion.save(user);
+	        // Crear el usuario
+	        user = new Users();
+	        user.setId(11);  // Si el ID es generado automáticamente por la base de datos, no deberías asignarlo manualmente
+	        user.setEmail("aaa@a.com");
+	        user.setUsername("a");
+	        user.setPassword("1");
+	        user.setNombre("a");
+	        user.setApellidos("AAAA");
+	        user.setDni("11111");
+	        user.setDireccion("Calle32432");
+	        user.setTelefono1(Integer.parseInt("666666666"));
+	        user.setTelefono2(Integer.parseInt("22222222"));
+	        user.setTipos(tipo);
 
-			sesion.update(user);
-			System.out.println("Usuario creado y guardado correctamente.");
+	        // Guardar el usuario
+	        sesion.save(user);
 
-		} catch (Exception e) {
-			System.err.println("Error al crear el usuario: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return user;
+	        // Confirmar la transacción
+	        sesion.getTransaction().commit();
+
+	        System.out.println("Usuario creado y guardado correctamente.");
+
+	    } catch (Exception e) {
+	        if (sesion.getTransaction() != null) {
+	            sesion.getTransaction().rollback();  // En caso de error, revertir los cambios
+	        }
+	        System.err.println("Error al crear el usuario: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        sesion.close();  // Asegurarse de cerrar la sesión
+	    }
+	    return user;
 	}
+
 
 	public String[][] obtenerHorarioPorId(int userId) {
 		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "", "", "" }, { "Hora2", "", "", "", "", "", "", "" },

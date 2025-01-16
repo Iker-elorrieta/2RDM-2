@@ -17,7 +17,7 @@ public class PanelLogin extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField tfUser;
 	private JPasswordField pfPass;
-	private JButton btnLogin;
+	private JButton btnLogin, btnCrearUser;
 	JLabel lblNewLabel;
 
 	/**
@@ -68,6 +68,10 @@ public class PanelLogin extends JPanel {
 		btnLogin.setBorderPainted(false);
 		btnLogin.setFocusPainted(false);
 		add(btnLogin);
+		
+		btnCrearUser = new JButton("Crear Usuario");
+		btnCrearUser.setBounds(31, 50, 144, 23);
+		add(btnCrearUser);
 	}
 
 	public JTextField getTfUser() {
@@ -94,4 +98,13 @@ public class PanelLogin extends JPanel {
 		this.btnLogin = btnLogin;
 	}
 
+	public JButton getBtnCrearUser() {
+		return btnCrearUser;
+	}
+
+	public void setBtnCrearUser(JButton btnCrearUser) {
+		this.btnCrearUser = btnCrearUser;
+	}
+	
+	
 }
