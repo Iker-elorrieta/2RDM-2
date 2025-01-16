@@ -1,6 +1,7 @@
 package Vista;
 
 import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -11,6 +12,7 @@ import javax.swing.JScrollPane;
 public class PanelOtrosHorarios extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private JButton btnVolver;
 
 	/**
 	 * Create the panel.
@@ -25,6 +27,11 @@ public class PanelOtrosHorarios extends JPanel {
 		lblOtrosHorarios.setBounds(66, 28, 312, 59);
 		add(lblOtrosHorarios);
 		
+		btnVolver = new JButton("Volver");
+		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnVolver.setBounds(84, 441, 101, 25);
+		add(btnVolver);
+		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 153, 499, 264);
 		add(scrollPane);
@@ -34,4 +41,14 @@ public class PanelOtrosHorarios extends JPanel {
 		scrollPane.setViewportView(listProfesores);
 
 	}
+
+	public JButton getBtnVolver() {
+		return btnVolver;
+	}
+
+	public void setBtnVolver(JButton btnVolver) {
+		this.btnVolver = btnVolver;
+	}
+	
+	
 }
