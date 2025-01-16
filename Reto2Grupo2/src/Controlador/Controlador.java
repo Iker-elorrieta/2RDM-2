@@ -105,9 +105,12 @@ public class Controlador  implements ActionListener{
 			break;
 		case CARGAR_PANEL_HORARIO:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
+			
 			break;
 		case CARGAR_PANEL_OTROS_HORARIOS:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
+			usuarioLogeado.mObtenerProfesores(usuarioLogeado.getId());
+			System.out.println(usuarioLogeado.mObtenerProfesores(usuarioLogeado.getId()));
 			break;
 		case CARGAR_PANEL_REUNIONES:
 			this.vistaPrincipal.mVisualizarPaneles(accion);

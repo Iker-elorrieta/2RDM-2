@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+
 public class Users implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -43,8 +44,10 @@ public class Users implements java.io.Serializable {
 	}
 
 	public Users(int id, Tipos tipos, String email, String username, String password, String nombre, String apellidos,
-			String dni, String direccion, Integer telefono1, Integer telefono2, byte[] argazkia, @SuppressWarnings("rawtypes") Set matriculacioneses,
-			@SuppressWarnings("rawtypes") Set reunionesesForProfesorId, @SuppressWarnings("rawtypes") Set reunionesesForAlumnoId, @SuppressWarnings("rawtypes") Set horarioses) {
+			String dni, String direccion, Integer telefono1, Integer telefono2, byte[] argazkia,
+			@SuppressWarnings("rawtypes") Set matriculacioneses,
+			@SuppressWarnings("rawtypes") Set reunionesesForProfesorId,
+			@SuppressWarnings("rawtypes") Set reunionesesForAlumnoId, @SuppressWarnings("rawtypes") Set horarioses) {
 		this.id = id;
 		this.tipos = tipos;
 		this.email = email;
@@ -194,7 +197,7 @@ public class Users implements java.io.Serializable {
 	public void setHorarioses(@SuppressWarnings("rawtypes") Set horarioses) {
 		this.horarioses = horarioses;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Users [id=" + id + ", tipos=" + tipos + ", email=" + email + ", username=" + username + ", password="
@@ -214,31 +217,61 @@ public class Users implements java.io.Serializable {
 		q.setParameter("password", passIntroducida);
 		Users user = (Users) q.uniqueResult();
 
-		if(user != null) {
-			return user; 
+		if (user != null) {
+			return user;
 		} else {
 			return null;
 		}
-		
+
 	}
 
+	public Users mCrearUsuario() {
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		Users user = null;
+
+		try {
+			Tipos tipo = new Tipos();
+			tipo.setId(4);
+			tipo.setName("profesor");
+			tipo.setNameEus("irakaslea");
+
+			user = new Users();
+			user.setEmail("aaa@a.com");
+			user.setUsername("a");
+			user.setPassword("1");
+			user.setNombre("a");
+			user.setApellidos("AAAA");
+			user.setDni("11111");
+			user.setDireccion("Calle32432");
+			user.setTelefono1(Integer.parseInt("666666666"));
+			user.setTelefono2(Integer.parseInt("22222222"));
+			user.setTipos(tipo);
+
+			sesion.save(user);
+
+			sesion.update(user);
+			System.out.println("Usuario creado y guardado correctamente.");
+
+		} catch (Exception e) {
+			System.err.println("Error al crear el usuario: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return user;
+	}
 
 	public String[][] obtenerHorarioPorId(int userId) {
-		String[][] horarioSemanal = {
-				{"Hora1",  "", "", "", "", "", "", "" },
-                { "Hora2", "", "", "", "", "", "", "" },
-                { "Hora3", "", "", "", "", "", "", "" },
-                { "Hora4", "", "", "", "", "", "", "" },
-                { "Hora5", "", "", "", "", "", "", "" }
-        };
-		
+		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "", "", "" }, { "Hora2", "", "", "", "", "", "", "" },
+				{ "Hora3", "", "", "", "", "", "", "" }, { "Hora4", "", "", "", "", "", "", "" },
+				{ "Hora5", "", "", "", "", "", "", "" } };
+
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
 		String hql = "from Horarios where users = " + userId + " ";
 		Query q = sesion.createQuery(hql);
 		List<?> horarios = q.list();
-		
-		for(Object res : horarios) {
+
+		for (Object res : horarios) {
 			Horarios horario = (Horarios) res;
 			int dia = convertirDia(horario.getId().getDia());
 			int hora = Integer.parseInt(horario.getId().getHora());
@@ -247,47 +280,48 @@ public class Users implements java.io.Serializable {
 		return horarioSemanal;
 	}
 
-	public List<Users> mObtenerProfesores(int userId) {
-		List<Users> listaProfesores = new ArrayList<Users>();
+	public List<String> mObtenerProfesores(int userId) {
+		List<String> listaProfesores = new ArrayList<String>();
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
-		String hql = "from Users where id != " + userId + " AND tipos.name = 'profesor'";
-		Query q = sesion.createQuery(hql);
+
+		String hqlNombre = "from Users where id != " + userId + " AND tipos.name = 'profesor'";
+		Query q = sesion.createQuery(hqlNombre);
 		List<?> filas = q.list();
-		
-		for( Object res : filas) {
+
+		for (Object res : filas) {
 			Users user = (Users) res;
-			listaProfesores.add(user);
+			String nombre = user.getNombre();
+			listaProfesores.add(nombre);
 		}
 		return listaProfesores;
 	}
-	
-	
+
 	private int convertirDia(String diaString) {
 		int dia = 0;
 		switch (diaString) {
 		case "L/A":
-			dia=1;
+			dia = 1;
 			break;
 		case "M/A":
-			dia=2;
+			dia = 2;
 			break;
 		case "X":
-			dia=3;
+			dia = 3;
 			break;
 		case "J/O":
-			dia=4;
+			dia = 4;
 			break;
 		case "V/O":
-			dia=5;
+			dia = 5;
 			break;
 		case "S/L":
-			dia=6;
+			dia = 6;
 			break;
 		case "D/I":
-			dia=7;
+			dia = 7;
 			break;
-		
+
 		default:
 			dia = 0;
 			break;

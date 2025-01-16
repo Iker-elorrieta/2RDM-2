@@ -80,7 +80,7 @@ public class HiloConexion extends Thread {
 	private void mostrarOtrosHorarios(DataInputStream ois, DataOutputStream oos) {
 		/*try {
 			int userId = (int) ois.readObject();
-			List<Users> listaProfesores = new Users().mObtenerProfesores(userId);
+			List<String> listaProfesores = new Users().mObtenerProfesores(userId);
 			oos.writeObject(listaProfesores);
 			oos.flush();
 		} catch (IOException | ClassNotFoundException ex) {
