@@ -215,7 +215,7 @@ public class Users implements java.io.Serializable {
 		Query q = sesion.createQuery(hql);
 		q.setParameter("username", userIntroducido);
 		q.setParameter("password", passIntroducida);
-		q.setParameter("tipo", tipoUsuario);
+		q.setParameter("tipoUsuario", tipoUsuario);
 		Users user = (Users) q.uniqueResult();
 
 		if (user != null) {
