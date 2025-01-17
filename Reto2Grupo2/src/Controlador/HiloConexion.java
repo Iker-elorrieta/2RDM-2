@@ -23,21 +23,24 @@ public class HiloConexion extends Thread {
 	public void run() {
 	    boolean continuar = true;
 
-	    try (DataOutputStream oos = new DataOutputStream(clienteSocket.getOutputStream());
-	    		DataInputStream ois = new DataInputStream(clienteSocket.getInputStream())) {
+	    try (
+	    		ObjectOutputStream oos = new ObjectOutputStream(clienteSocket.getOutputStream());
+	    		ObjectInputStream ois = new ObjectInputStream(clienteSocket.getInputStream());
+	    		DataOutputStream dos = new DataOutputStream(clienteSocket.getOutputStream());
+	    		DataInputStream dis = new DataInputStream(clienteSocket.getInputStream())) {
 
 	        while (continuar) {
 	            try {
-	                int accion = (int) ois.readInt();
+	                int accion = (int) dis.readInt();
 	                switch (accion) {
 	                case 1:
-	                    login(ois, oos);
+	                    login(dis, dos);
 	                    break;
 	                case 2:
-	                    mostrarHorario(ois, oos);
+	                    mostrarHorario(dis, dos);
 	                    break;
 	                case 3:
-	                    mostrarOtrosHorarios(ois, oos);
+	                    mostrarOtrosHorarios(dis, dos);
 	                    break;
 	                default:
 	                    continuar = false;
@@ -53,14 +56,14 @@ public class HiloConexion extends Thread {
 	    }
 	}
 
-	private void login(DataInputStream ois, DataOutputStream oos) {
+	private void login(DataInputStream dis, DataOutputStream dos) {
 		try {
-			String nombreUser = (String) ois.readUTF();
-			String pass = (String) ois.readUTF();
+			String nombreUser = (String) dis.readUTF();
+			String pass = (String) dis.readUTF();
 			Users user = new Users().mObtenerUsuario(nombreUser, pass);
-			oos.writeUTF(user.getNombre());
-			oos.writeUTF(user.getPassword());
-			oos.flush();
+			dos.writeUTF(user.getNombre());
+			dos.writeUTF(user.getPassword());
+			dos.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
