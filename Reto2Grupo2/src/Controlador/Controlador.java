@@ -31,6 +31,7 @@ public class Controlador implements ActionListener {
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	private boolean conexionActiva;
+	private final static String TIPO_USUARIO = "profesor";
 
 	public Controlador(VentanaPrincipal ventanaLogin) {
 		this.vistaPrincipal = ventanaLogin;
@@ -187,7 +188,7 @@ public class Controlador implements ActionListener {
 
 		if (!usuarioIntroducido.isEmpty() && !passIntroducida.isEmpty()) {
 			Users usuario = new Users();
-			usuarioLogeado = usuario.mObtenerUsuario(usuarioIntroducido, passIntroducida);
+			usuarioLogeado = usuario.mObtenerUsuario(usuarioIntroducido, passIntroducida, TIPO_USUARIO); 
 			if (usuarioLogeado != null) {
 				System.out.println("Usuario correcto");
 

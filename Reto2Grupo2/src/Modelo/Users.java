@@ -208,13 +208,14 @@ public class Users implements java.io.Serializable {
 				+ horarioses + "]";
 	}
 
-	public Users mObtenerUsuario(String idIntroducido, String passIntroducida) {
+	public Users mObtenerUsuario(String userIntroducido, String passIntroducida, String tipoUsuario) {
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
-		String hql = "from Users where username = :username AND password = :password AND tipos.name = 'profesor'";
+		String hql = "from Users where username = :username AND password = :password AND tipos.name = :tipoUsuario";
 		Query q = sesion.createQuery(hql);
-		q.setParameter("username", idIntroducido);
+		q.setParameter("username", userIntroducido);
 		q.setParameter("password", passIntroducida);
+		q.setParameter("tipo", tipoUsuario);
 		Users user = (Users) q.uniqueResult();
 
 		if (user != null) {

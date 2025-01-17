@@ -36,7 +36,12 @@ public class HiloConexion extends Thread {
 	                    case 1:
 	                        login(dis, dos);
 	                        break;
-	                       
+	                    case 2: 
+	                    	mostrarHorario(dis, dos);
+	                    	break;
+	                    case 3: 
+	                    	mostrarOtrosHorarios(dis, dos);
+	                    	break;
 	                    case -1:
 	                        System.out.println("Cliente solicitó desconexión.");
 	                        continuar = false;
@@ -69,16 +74,19 @@ public class HiloConexion extends Thread {
 	    try {
 	        String nombreUser = dis.readUTF();
 	        String pass = dis.readUTF();
-	        Users user = new Users().mObtenerUsuario(nombreUser, pass);
+	        String tipoUsuario = dis.readUTF();
+	        Users user = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
+	        
 	        dos.writeUTF(user.getNombre());
 	        dos.writeUTF(user.getPassword());
+	        dos.writeUTF(user.getTipos().getName());
 	        dos.flush();
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	}
 
-	private void mostrarHorario(DataInputStream ois, DataOutputStream oos) {
+	private void mostrarHorario(DataInputStream dis, DataOutputStream dos) {
 		/*try {
 			int userId = (int) ois.readObject();
 			String[][] horarioUser = new Users().obtenerHorarioPorId(userId);
@@ -89,7 +97,7 @@ public class HiloConexion extends Thread {
 		}*/
 	}
 
-	private void mostrarOtrosHorarios(DataInputStream ois, DataOutputStream oos) {
+	private void mostrarOtrosHorarios(DataInputStream dis, DataOutputStream dos) {
 		/*try {
 			int userId = (int) ois.readObject();
 			List<String> listaProfesores = new Users().mObtenerProfesores(userId);
