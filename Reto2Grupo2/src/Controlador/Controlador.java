@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
@@ -32,6 +33,7 @@ public class Controlador implements ActionListener {
 	private DataInputStream dis;
 	private boolean conexionActiva;
 	private final static String TIPO_USUARIO = "profesor";
+	private boolean loginCorrecto = false;
 
 	public Controlador(VentanaPrincipal ventanaLogin) {
 		this.vistaPrincipal = ventanaLogin;
@@ -158,6 +160,7 @@ public class Controlador implements ActionListener {
 			break;
 		case CARGAR_PANEL_HORARIO:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
+			this.mMostrarHorarios();
 
 			break;
 		case CARGAR_PANEL_OTROS_HORARIOS:
@@ -180,34 +183,52 @@ public class Controlador implements ActionListener {
 
 		}
 	}
+	
+	private void mMostrarHorarios() {
+		// TODO Auto-generated method stub
+		try {
+		    dos.writeInt(2); // Enviar userId al servidor
+		    dos.flush();
+		    System.out.println("userId enviado al servidor.");
+		 
+
+		    Thread.sleep(500); // Esperar brevemente antes de leer (opcional, solo para pruebas)
+
+		    String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
+		    System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+		    e.printStackTrace();
+		}
+
+				
+	}
 
 	private void mConfirmarLogin(enumAcciones accion) {
-		PanelLogin panelLogin = this.vistaPrincipal.getPanelLogin();
-		String usuarioIntroducido = panelLogin.getTfUser().getText().trim();
-		String passIntroducida = new String(panelLogin.getPfPass().getPassword()).trim();
-
-		if (!usuarioIntroducido.isEmpty() && !passIntroducida.isEmpty()) {
-			Users usuario = new Users();
-			usuarioLogeado = usuario.mObtenerUsuario(usuarioIntroducido, passIntroducida, TIPO_USUARIO); 
-			if (usuarioLogeado != null) {
-				System.out.println("Usuario correcto");
-
-				// Solo inicializar la conexión si no está abierta
-				if (socketCliente == null || socketCliente.isClosed()) {
-					inicializarControlador(); // Establecer conexión solo si no está abierta
+		// TODO Auto-generated method stub
+				try {
+					dos.writeInt(1);
+					dos.flush();
+					dos.writeUTF(this.vistaPrincipal.getPanelLogin().getTfUser().getText());
+					dos.flush();
+					dos.writeUTF(new String(this.vistaPrincipal.getPanelLogin().getPfPass().getPassword()));
+					dos.flush();
+					dos.writeUTF(TIPO_USUARIO);
+					dos.flush();
+					loginCorrecto = dis.readBoolean();
+					
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
-				// Mostrar el panel del menú
-				this.vistaPrincipal.mVisualizarPaneles(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU);
-				panelLogin.getTfUser().setText("");
-				panelLogin.getPfPass().setText("");
-			} else {
-				JOptionPane.showMessageDialog(null, "No se ha encontrado el usuario", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "Algún campo está vacío", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+				if (loginCorrecto) {
+					
+					this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "Login incorrecto");
+				}
 	}
 
 	private synchronized void desconectar() {

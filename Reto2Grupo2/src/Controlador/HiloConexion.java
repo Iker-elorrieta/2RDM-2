@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.List;
 
 import Modelo.Users;
@@ -15,7 +16,8 @@ import Modelo.Users;
 public class HiloConexion extends Thread {
 
 	Socket clienteSocket;
-	 boolean continuar = true;
+	boolean continuar = true;
+	Users userLogeado;
 
 	public HiloConexion(Socket clienteSocket) {
 		this.clienteSocket = clienteSocket;
@@ -35,9 +37,10 @@ public class HiloConexion extends Thread {
 	                switch (accion) {
 	                    case 1:
 	                        login(dis, dos);
+	                        
 	                        break;
 	                    case 2: 
-	                    	mostrarHorario(dis, dos);
+	                    	mostrarHorario(ois, oos);
 	                    	break;
 	                    case 3: 
 	                    	mostrarOtrosHorarios(dis, dos);
@@ -72,30 +75,45 @@ public class HiloConexion extends Thread {
 
 	private void login(DataInputStream dis, DataOutputStream dos) {
 	    try {
+	    	boolean loginCorrecto = false;
+	    	
 	        String nombreUser = dis.readUTF();
+
 	        String pass = dis.readUTF();
+
 	        String tipoUsuario = dis.readUTF();
-	        Users user = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
+
+	        userLogeado = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
 	        
-	        dos.writeUTF(user.getNombre());
-	        dos.writeUTF(user.getPassword());
-	        dos.writeUTF(user.getTipos().getName());
-	        dos.flush();
+	        if(userLogeado.getNombre() != null && userLogeado.getPassword() != null) {
+	        	loginCorrecto = true;
+	        	dos.writeBoolean(loginCorrecto);
+	        	dos.flush();
+	        }
+	        
+	        
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	}
 
-	private void mostrarHorario(DataInputStream dis, DataOutputStream dos) {
-		/*try {
-			int userId = (int) ois.readObject();
-			String[][] horarioUser = new Users().obtenerHorarioPorId(userId);
-			oos.writeObject(horarioUser);
-			oos.flush();
-		} catch (IOException | ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}*/
+	private void mostrarHorario(ObjectInputStream ois, ObjectOutputStream oos) {
+	    try {
+	       
+	        
+
+	        String[][] horarioUser = new Users().obtenerHorarioPorId(userLogeado.getId()); // Generar horario
+	        System.out.println("Horario generado: " + Arrays.deepToString(horarioUser));
+
+	        System.out.println("Enviando objeto horarioUser");
+	        oos.writeObject(horarioUser); 
+	        oos.flush();
+	        System.out.println("Horario enviado correctamente.");
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
 	}
+
 
 	private void mostrarOtrosHorarios(DataInputStream dis, DataOutputStream dos) {
 		/*try {
