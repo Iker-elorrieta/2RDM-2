@@ -119,6 +119,7 @@ public class VentanaPrincipal extends JFrame {
 			break;
 		case CARGAR_PANEL_HORARIO:
 			panelHorario.setVisible(true);
+			
 			break;
 		case CARGAR_PANEL_OTROS_HORARIOS:
 			panelOtrosHorarios.setVisible(true);

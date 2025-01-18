@@ -277,9 +277,9 @@ public class Users implements java.io.Serializable {
 
 
 	public String[][] obtenerHorarioPorId(int userId) {
-		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "", "", "" }, { "Hora2", "", "", "", "", "", "", "" },
-				{ "Hora3", "", "", "", "", "", "", "" }, { "Hora4", "", "", "", "", "", "", "" },
-				{ "Hora5", "", "", "", "", "", "", "" } };
+		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
+				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" },
+				{ "Hora5", "", "", "", "", "" } };
 
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();

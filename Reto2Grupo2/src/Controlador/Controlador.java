@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import Modelo.Users;
 import Vista.PanelLogin;
@@ -185,23 +186,29 @@ public class Controlador implements ActionListener {
 	}
 	
 	private void mMostrarHorarios() {
-		// TODO Auto-generated method stub
-		try {
-		    dos.writeInt(2); // Enviar userId al servidor
-		    dos.flush();
-		    System.out.println("userId enviado al servidor.");
-		 
+	    try {
+	        dos.writeInt(2); // Enviar userId al servidor
+	        dos.flush();
+	        System.out.println("userId enviado al servidor.");
 
-		    Thread.sleep(500); // Esperar brevemente antes de leer (opcional, solo para pruebas)
+	        Thread.sleep(500); // Esperar brevemente antes de leer (opcional, solo para pruebas)
 
-		    String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
-		    System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
-		    e.printStackTrace();
-		}
+	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
+	        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
 
-				
+	        // Actualizar la tabla con los datos del horario
+	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelHorario().getTablaHorario().getModel();
+
+	        for (int i = 0; i < horarioUser.length; i++) {
+	            for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
+	                modelo.setValueAt(horarioUser[i][j], i + 1, j);
+	            }
+	        }
+	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 	private void mConfirmarLogin(enumAcciones accion) {
 		// TODO Auto-generated method stub
