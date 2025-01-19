@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,14 +37,17 @@ public class HiloConexion extends Thread {
 	                int accion = dis.readInt(); // Leer acción enviada por el cliente
 	                switch (accion) {
 	                    case 1:
-	                        login(dis, dos);
+	                        login(dis, dos, oos);
 	                        
 	                        break;
 	                    case 2: 
 	                    	mostrarHorario(ois, oos);
 	                    	break;
 	                    case 3: 
-	                    	mostrarOtrosHorarios(dis, dos);
+	                    	mostrarOtrosHorarios(ois, oos, dis);
+	                    	break;
+	                    case 4:
+	                    	cargarHorarioPorfesorSeleccionado(dis, oos);
 	                    	break;
 	                    case -1:
 	                        System.out.println("Cliente solicitó desconexión.");
@@ -73,7 +77,29 @@ public class HiloConexion extends Thread {
 
 
 
-	private void login(DataInputStream dis, DataOutputStream dos) {
+	private void cargarHorarioPorfesorSeleccionado(DataInputStream dis, ObjectOutputStream oos) {
+		
+		
+        try {
+        	
+        	int id = dis.readInt();
+    		String[][] horarioUser = new Users().obtenerHorarioPorId(id); 
+            
+
+            System.out.println("Enviando objeto horarioUser");
+        	
+			oos.writeObject(horarioUser);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+        
+        System.out.println("Horario enviado correctamente.");
+		
+	}
+
+	private void login(DataInputStream dis, DataOutputStream dos, ObjectOutputStream oos ) {
 	    try {
 	    	boolean loginCorrecto = false;
 	    	
@@ -92,6 +118,8 @@ public class HiloConexion extends Thread {
 	        }
 	        
 	        
+	        
+	        
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
@@ -100,7 +128,6 @@ public class HiloConexion extends Thread {
 	private void mostrarHorario(ObjectInputStream ois, ObjectOutputStream oos) {
 	    try {
 	       
-	        
 
 	        String[][] horarioUser = new Users().obtenerHorarioPorId(userLogeado.getId()); // Generar horario
 	        System.out.println("Horario generado: " + Arrays.deepToString(horarioUser));
@@ -115,19 +142,27 @@ public class HiloConexion extends Thread {
 	}
 
 
-	private void mostrarOtrosHorarios(DataInputStream dis, DataOutputStream dos) {
-		/*try {
-			int userId = (int) ois.readObject();
-			List<String> listaProfesores = new Users().mObtenerProfesores(userId);
+	private void mostrarOtrosHorarios(ObjectInputStream ois, ObjectOutputStream oos, DataInputStream dis) {
+		try {
+			
+			List<Users> listaProfesores = userLogeado.mObtenerProfesores(userLogeado.getId());
+			
 			oos.writeObject(listaProfesores);
 			oos.flush();
-		} catch (IOException | ClassNotFoundException ex) {
+			System.out.println("lista de profesores enviada correctamente.");
+			
+			int id = dis.readInt();
+			String[][] horarioUser = new Users().obtenerHorarioPorId(id); 
+	        
+
+	        System.out.println("Enviando objeto horarioUser");
+	        oos.writeObject(horarioUser); 
+	        oos.flush();
+	        System.out.println("Horario enviado correctamente.");
+	        
+		} catch (IOException ex) {
 			ex.printStackTrace();
-		}*/
+		}
 
 	}
-	
-	
-
-
 }

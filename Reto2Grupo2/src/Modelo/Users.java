@@ -10,7 +10,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-
 public class Users implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -227,59 +226,58 @@ public class Users implements java.io.Serializable {
 	}
 
 	public Users mCrearUsuario() {
-	    SessionFactory sf = HibernateUtil.getSessionFactory();
-	    Session sesion = sf.openSession();
-	    Users user = null;
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		Users user = null;
 
-	    try {
-	        // Iniciar la transacción
-	        sesion.beginTransaction();
+		try {
+			// Iniciar la transacción
+			sesion.beginTransaction();
 
-	        // Crear un tipo de usuario
-	        Tipos tipo = new Tipos();
-	        tipo.setId(4);
-	        tipo.setName("profesor");
-	        tipo.setNameEus("irakaslea");
+			// Crear un tipo de usuario
+			Tipos tipo = new Tipos();
+			tipo.setId(4);
+			tipo.setName("profesor");
+			tipo.setNameEus("irakaslea");
 
-	        // Crear el usuario
-	        user = new Users();
-	        user.setId(11);  // Si el ID es generado automáticamente por la base de datos, no deberías asignarlo manualmente
-	        user.setEmail("aaa@a.com");
-	        user.setUsername("a");
-	        user.setPassword("1");
-	        user.setNombre("a");
-	        user.setApellidos("AAAA");
-	        user.setDni("11111");
-	        user.setDireccion("Calle32432");
-	        user.setTelefono1(Integer.parseInt("666666666"));
-	        user.setTelefono2(Integer.parseInt("22222222"));
-	        user.setTipos(tipo);
+			// Crear el usuario
+			user = new Users();
+			user.setId(11); // Si el ID es generado automáticamente por la base de datos, no deberías
+							// asignarlo manualmente
+			user.setEmail("aaa@a.com");
+			user.setUsername("a");
+			user.setPassword("1");
+			user.setNombre("a");
+			user.setApellidos("AAAA");
+			user.setDni("11111");
+			user.setDireccion("Calle32432");
+			user.setTelefono1(Integer.parseInt("666666666"));
+			user.setTelefono2(Integer.parseInt("22222222"));
+			user.setTipos(tipo);
 
-	        // Guardar el usuario
-	        sesion.save(user);
+			// Guardar el usuario
+			sesion.save(user);
 
-	        // Confirmar la transacción
-	        sesion.getTransaction().commit();
+			// Confirmar la transacción
+			sesion.getTransaction().commit();
 
-	        System.out.println("Usuario creado y guardado correctamente.");
+			System.out.println("Usuario creado y guardado correctamente.");
 
-	    } catch (Exception e) {
-	        if (sesion.getTransaction() != null) {
-	            sesion.getTransaction().rollback();  // En caso de error, revertir los cambios
-	        }
-	        System.err.println("Error al crear el usuario: " + e.getMessage());
-	        e.printStackTrace();
-	    } finally {
-	        sesion.close();  // Asegurarse de cerrar la sesión
-	    }
-	    return user;
+		} catch (Exception e) {
+			if (sesion.getTransaction() != null) {
+				sesion.getTransaction().rollback(); // En caso de error, revertir los cambios
+			}
+			System.err.println("Error al crear el usuario: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			sesion.close(); // Asegurarse de cerrar la sesión
+		}
+		return user;
 	}
-
 
 	public String[][] obtenerHorarioPorId(int userId) {
 		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
-				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" },
-				{ "Hora5", "", "", "", "", "" } };
+				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
 
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
@@ -296,8 +294,8 @@ public class Users implements java.io.Serializable {
 		return horarioSemanal;
 	}
 
-	public List<String> mObtenerProfesores(int userId) {
-		List<String> listaProfesores = new ArrayList<String>();
+	public List<Users> mObtenerProfesores(int userId) {
+		List<Users> listaProfesores = new ArrayList<Users>();
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
 
@@ -307,12 +305,12 @@ public class Users implements java.io.Serializable {
 
 		for (Object res : filas) {
 			Users user = (Users) res;
-			String nombre = user.getNombre();
-			listaProfesores.add(nombre);
+			
+			listaProfesores.add(user);
 		}
 		return listaProfesores;
 	}
-
+	
 	private int convertirDia(String diaString) {
 		int dia = 0;
 		switch (diaString) {

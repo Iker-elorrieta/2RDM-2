@@ -2,6 +2,7 @@ package Controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -14,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -166,8 +168,7 @@ public class Controlador implements ActionListener {
 			break;
 		case CARGAR_PANEL_OTROS_HORARIOS:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
-			usuarioLogeado.mObtenerProfesores(usuarioLogeado.getId());
-			System.out.println(usuarioLogeado.mObtenerProfesores(usuarioLogeado.getId()));
+			mCargarProfesores();
 			break;
 		case CARGAR_PANEL_REUNIONES:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
@@ -184,14 +185,84 @@ public class Controlador implements ActionListener {
 
 		}
 	}
+
+	private void mCargarProfesores() {
+
+		try {
+
+			dos.writeInt(3);
+			dos.flush();
+
+			List<Users> listaProfesores = (List<Users>) ois.readObject();
+
+			for (Users profesor : listaProfesores) {
+
+				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor.getNombre());
+			}
+			
+			 this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
+		            
+		            String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().getSelectedItem();
+		            
+		            for (Users users : listaProfesores) {
+						if(users.getNombre()==selectedProfesor) {
+							try {
+								
+								dos.writeInt(4);
+								dos.flush();
+								
+								dos.writeInt(users.getId());
+								dos.flush();
+								
+								String[][] horarioUser = (String[][]) ois.readObject(); 
+						        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+
+						        
+						        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelOtrosHorarios().getTablaHorario().getModel();
+
+						        for (int i = 0; i < horarioUser.length; i++) {
+						            for (int j = 1; j < horarioUser[i].length; j++) { 
+						                modelo.setValueAt(horarioUser[i][j], i + 1, j);
+						            }
+						        }
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (ClassNotFoundException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+		            
+		            
+		            
+		        });
+			
+			
+			 
+			 
+			
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 	
 	private void mMostrarHorarios() {
 	    try {
-	        dos.writeInt(2); // Enviar userId al servidor
+	        dos.writeInt(2); 
 	        dos.flush();
-	        System.out.println("userId enviado al servidor.");
+	        
 
-	        Thread.sleep(500); // Esperar brevemente antes de leer (opcional, solo para pruebas)
+	        Thread.sleep(500); 
 
 	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
 	        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
@@ -208,6 +279,7 @@ public class Controlador implements ActionListener {
 	        e.printStackTrace();
 	    }
 	}
+	
 
 
 	private void mConfirmarLogin(enumAcciones accion) {
@@ -222,6 +294,8 @@ public class Controlador implements ActionListener {
 					dos.writeUTF(TIPO_USUARIO);
 					dos.flush();
 					loginCorrecto = dis.readBoolean();
+					
+					
 					
 					
 				} catch (IOException e) {
