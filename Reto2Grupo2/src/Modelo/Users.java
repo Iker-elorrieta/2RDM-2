@@ -217,11 +217,7 @@ public class Users implements java.io.Serializable {
 		q.setParameter("tipoUsuario", tipoUsuario);
 		Users user = (Users) q.uniqueResult();
 
-		if (user != null) {
-			return user;
-		} else {
-			return null;
-		}
+		return user;
 
 	}
 

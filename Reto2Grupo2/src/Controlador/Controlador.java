@@ -36,7 +36,7 @@ public class Controlador implements ActionListener {
 	private DataInputStream dis;
 	private boolean conexionActiva;
 	private final static String TIPO_USUARIO = "profesor";
-	private boolean loginCorrecto = false;
+	private boolean loginCorrecto;
 
 	public Controlador(VentanaPrincipal ventanaLogin) {
 		this.vistaPrincipal = ventanaLogin;

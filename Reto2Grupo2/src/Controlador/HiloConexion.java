@@ -111,10 +111,15 @@ public class HiloConexion extends Thread {
 
 	        userLogeado = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
 	        
-	        if(userLogeado.getNombre() != null && userLogeado.getPassword() != null) {
+	        if(userLogeado!=null) {
 	        	loginCorrecto = true;
 	        	dos.writeBoolean(loginCorrecto);
 	        	dos.flush();
+	        }else {
+	        	
+	        	dos.writeBoolean(loginCorrecto);
+	        	dos.flush();
+	        	
 	        }
 	        
 	        
