@@ -52,6 +52,9 @@ public class HiloConexion extends Thread {
 	                    case 5:
 	                    	new Users().mCrearUsuario();
 	                    	break;
+	                    case 6:
+	                    	
+	                    	break;
 	                    case -1:
 	                        System.out.println("Cliente solicitó desconexión.");
 	                        continuar = false;
@@ -80,6 +83,11 @@ public class HiloConexion extends Thread {
 
 
 
+	private void cargarReunionesProfesorLogeado(DataInputStream dis) {
+
+
+		
+	}
 	
 
 	private void cargarHorarioPorfesorSeleccionado(DataInputStream dis, ObjectOutputStream oos) {
@@ -90,7 +98,6 @@ public class HiloConexion extends Thread {
         	int id = dis.readInt();
     		String[][] horarioUser = new Users().obtenerHorarioPorId(id); 
             
-
             System.out.println("Enviando objeto horarioUser");
         	
 			oos.writeObject(horarioUser);
@@ -98,10 +105,8 @@ public class HiloConexion extends Thread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-        
+		}  
         System.out.println("Horario enviado correctamente.");
-		
 	}
 
 	private void login(DataInputStream dis, DataOutputStream dos, ObjectOutputStream oos ) {

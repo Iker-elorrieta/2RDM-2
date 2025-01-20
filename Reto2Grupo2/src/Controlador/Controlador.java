@@ -46,7 +46,7 @@ public class Controlador implements ActionListener {
 
 	private void inicializarControlador() {
 
-		conexionActiva = true;
+		
 		try {
 			socketCliente = new Socket("localhost", 2845);
 			oos = new ObjectOutputStream(socketCliente.getOutputStream());
@@ -64,7 +64,7 @@ public class Controlador implements ActionListener {
 			public void windowClosing(WindowEvent e) {
 				// Solo llamar a desconectar si no se ha hecho ya
 				if (conexionActiva) {
-					desconectar();
+					cerrarVentana();
 				}
 				System.exit(0); // Cierra la aplicación después de desconectar
 			}
@@ -172,6 +172,7 @@ public class Controlador implements ActionListener {
 			break;
 		case CARGAR_PANEL_REUNIONES:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
+			mMostrarReuniones();
 			break;
 		case DESCONECTAR:
 			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_LOGIN);
@@ -186,7 +187,31 @@ public class Controlador implements ActionListener {
 		}
 	}
 	
+	private void mMostrarReuniones() {
+		
+	try {		
+			
+			dos.writeInt(6);
+			dos.flush();
+			
+			dos.writeInt(0);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
+	
+	private void desconectar() {
+		
+		usuarioLogeado = null;
+		
+		this.vistaPrincipal.getPanelLogin().getTfUser().setText("");
+		this.vistaPrincipal.getPanelLogin().getPfPass().setText("");
+	}
+
 	private void mCrearUsuario() {
 		
 		try {		
@@ -248,16 +273,9 @@ public class Controlador implements ActionListener {
 							}
 						}
 					}
-		            
-		            
-		            
+	            
 		        });
-			
-			
-			 
-			 
-			
-
+	
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -320,13 +338,14 @@ public class Controlador implements ActionListener {
 				if (loginCorrecto) {
 					
 					this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
+					conexionActiva = true;
 					
 				} else {
 					JOptionPane.showMessageDialog(null, "Login incorrecto");
 				}
 	}
 
-	private synchronized void desconectar() {
+	private synchronized void cerrarVentana() {
 		// Verifica si la conexión ya está inactiva
 		if (!conexionActiva) {
 			return; // Si la conexión ya está cerrada, no hacer nada
