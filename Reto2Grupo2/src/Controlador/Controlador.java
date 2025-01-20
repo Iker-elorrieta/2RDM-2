@@ -87,7 +87,7 @@ public class Controlador implements ActionListener {
 				}
 			}
 		});
-
+		
 		panelLogin.getPfPass().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -178,11 +178,25 @@ public class Controlador implements ActionListener {
 			desconectar();
 			break;
 		case CREAR_USUARIO:
-			new Users().mCrearUsuario();
+			mCrearUsuario();
 			break;
 		default:
 			break;
 
+		}
+	}
+	
+	
+	private void mCrearUsuario() {
+		
+		try {		
+			
+			dos.writeInt(5);
+			dos.flush();			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -356,8 +370,6 @@ public class Controlador implements ActionListener {
 		socketCliente = null;
 	}
 
-	private void mMostrarOtrosProfesores() {
-
-	}
+	
 
 }

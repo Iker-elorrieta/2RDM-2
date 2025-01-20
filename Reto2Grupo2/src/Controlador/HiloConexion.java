@@ -49,6 +49,9 @@ public class HiloConexion extends Thread {
 	                    case 4:
 	                    	cargarHorarioPorfesorSeleccionado(dis, oos);
 	                    	break;
+	                    case 5:
+	                    	new Users().mCrearUsuario();
+	                    	break;
 	                    case -1:
 	                        System.out.println("Cliente solicitó desconexión.");
 	                        continuar = false;
@@ -76,6 +79,8 @@ public class HiloConexion extends Thread {
 	}
 
 
+
+	
 
 	private void cargarHorarioPorfesorSeleccionado(DataInputStream dis, ObjectOutputStream oos) {
 		
