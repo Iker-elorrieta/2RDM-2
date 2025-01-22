@@ -1,6 +1,13 @@
 package Modelo;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public class Reuniones implements java.io.Serializable {
 
@@ -115,6 +122,53 @@ public class Reuniones implements java.io.Serializable {
 
 	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
+	}
+	
+	public String[][] obtenerReunionesPorID(int userId) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+		
+		String[][] horarioReuniones = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
+				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
+		
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		String hql = "from Reuniones where usersByProfesorId = " + userId + " ";
+		Query q = sesion.createQuery(hql);
+		List<?> reuniones = q.list();
+		
+		for (Object res : reuniones) {
+			Reuniones reunion = (Reuniones) res;
+System.out.println(reunion.getFecha().toString());
+			LocalDateTime fechaHora = LocalDateTime.parse(reunion.getFecha().toString(), formatter);
+			int dia = fechaHora.getDayOfWeek().getValue();
+			int hora = fechaHora.getHour();
+			
+			switch(hora) {
+			case 8: 
+				hora = 1;
+				break;
+			case 9: 
+				hora = 2;
+				break;
+			case 10: 
+				hora = 3;
+				break;
+			case 11: 
+				hora = 4;
+				break;
+			case 12: 
+				hora = 5;
+				break;
+			}
+			
+			 if (hora >= 1 && hora <= 5 && dia >= 1 && dia <= 5) {
+		            horarioReuniones[hora - 1][dia] = reunion.getTitulo(); // Ajustar índices para array
+		        } else {
+		            System.out.println("Hora o día fuera de rango: " + hora + ", " + dia);
+		        }
+		}
+		
+		return horarioReuniones;
 	}
 
 }

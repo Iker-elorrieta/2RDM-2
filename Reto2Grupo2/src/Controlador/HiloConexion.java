@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import Modelo.Horarios;
+import Modelo.Reuniones;
 import Modelo.Users;
 
 public class HiloConexion extends Thread {
@@ -53,7 +55,7 @@ public class HiloConexion extends Thread {
 	                    	new Users().mCrearUsuario();
 	                    	break;
 	                    case 6:
-	                    	
+	                    	cargarReunionesProfesorLogeado(ois,oos);
 	                    	break;
 	                    case -1:
 	                        System.out.println("Cliente solicitó desconexión.");
@@ -83,9 +85,21 @@ public class HiloConexion extends Thread {
 
 
 
-	private void cargarReunionesProfesorLogeado(DataInputStream dis) {
+	private void cargarReunionesProfesorLogeado(ObjectInputStream ois, ObjectOutputStream oos) {
 
+		try {
+		       
 
+	        String[][] reunionesUser = new Reuniones().obtenerReunionesPorID(userLogeado.getId()); 
+	        System.out.println("Horario generado: " + Arrays.deepToString(reunionesUser));
+
+	        System.out.println("Enviando objeto reunionesUser");
+	        oos.writeObject(reunionesUser); 
+	        oos.flush();
+	        System.out.println("Reuniones enviado correctamente.");
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
 		
 	}
 	
@@ -96,7 +110,7 @@ public class HiloConexion extends Thread {
         try {
         	
         	int id = dis.readInt();
-    		String[][] horarioUser = new Users().obtenerHorarioPorId(id); 
+    		String[][] horarioUser = new Horarios().obtenerHorarioPorId(id); 
             
             System.out.println("Enviando objeto horarioUser");
         	
@@ -144,7 +158,7 @@ public class HiloConexion extends Thread {
 	    try {
 	       
 
-	        String[][] horarioUser = new Users().obtenerHorarioPorId(userLogeado.getId()); // Generar horario
+	        String[][] horarioUser = new Horarios().obtenerHorarioPorId(userLogeado.getId()); // Generar horario
 	        System.out.println("Horario generado: " + Arrays.deepToString(horarioUser));
 
 	        System.out.println("Enviando objeto horarioUser");
@@ -167,7 +181,7 @@ public class HiloConexion extends Thread {
 			System.out.println("lista de profesores enviada correctamente.");
 			
 			int id = dis.readInt();
-			String[][] horarioUser = new Users().obtenerHorarioPorId(id); 
+			String[][] horarioUser = new Horarios().obtenerHorarioPorId(id); 
 	        
 
 	        System.out.println("Enviando objeto horarioUser");

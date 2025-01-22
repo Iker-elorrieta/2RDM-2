@@ -280,24 +280,7 @@ public class Users implements java.io.Serializable {
 	    return user;
 	}
 
-	public String[][] obtenerHorarioPorId(int userId) {
-		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
-				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
 
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session sesion = sf.openSession();
-		String hql = "from Horarios where users = " + userId + " ";
-		Query q = sesion.createQuery(hql);
-		List<?> horarios = q.list();
-
-		for (Object res : horarios) {
-			Horarios horario = (Horarios) res;
-			int dia = convertirDia(horario.getId().getDia());
-			int hora = Integer.parseInt(horario.getId().getHora());
-			horarioSemanal[hora - 1][dia] = horario.getModulos().getNombre();
-		}
-		return horarioSemanal;
-	}
 
 	public List<Users> mObtenerProfesores(int userId) {
 		List<Users> listaProfesores = new ArrayList<Users>();
@@ -316,36 +299,6 @@ public class Users implements java.io.Serializable {
 		return listaProfesores;
 	}
 
-	private int convertirDia(String diaString) {
-		int dia = 0;
-		switch (diaString) {
-		case "L/A":
-			dia = 1;
-			break;
-		case "M/A":
-			dia = 2;
-			break;
-		case "X":
-			dia = 3;
-			break;
-		case "J/O":
-			dia = 4;
-			break;
-		case "V/O":
-			dia = 5;
-			break;
-		case "S/L":
-			dia = 6;
-			break;
-		case "D/I":
-			dia = 7;
-			break;
-
-		default:
-			dia = 0;
-			break;
-		}
-		return dia;
-	}
+	
 
 }

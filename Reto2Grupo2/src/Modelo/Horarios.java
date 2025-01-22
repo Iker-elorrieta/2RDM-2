@@ -1,5 +1,7 @@
 package Modelo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -50,46 +52,56 @@ public class Horarios implements java.io.Serializable {
 	
 	
 	
-	public String[][] getHorarioById(int idUsuario) {
-		// TODO Auto-generated method stub
-		String[][] planSemanal = {
-				{ "1ra", "", "", "", "", "", "", "" }, { "2da", "", "", "", "", "", "", "" },
-				{ "3ra", "", "", "", "", "", "", "" }, { "4ta", "", "", "", "", "", "", "" },
-				{ "5ta", "", "", "", "", "", "", "" } };
+	
+	
+	
+	public String[][] obtenerHorarioPorId(int userId) {
+		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
+				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
 
-		SessionFactory sesion = HibernateUtil.getSessionFactory();
-		Session session = sesion.openSession();
-		String hql = "from Horarios where users = " + idUsuario + " ";
-		Query q = session.createQuery(hql);
-		List<?> filas = q.list();
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		String hql = "from Horarios where users = " + userId + " ";
+		Query q = sesion.createQuery(hql);
+		List<?> horarios = q.list();
 
-		for (int i = 0; i < filas.size(); i++) {
-			Horarios horario = (Horarios) filas.get(i);
-			int dia = conseguirDia(horario.getId().getDia());
+		for (Object res : horarios) {
+			Horarios horario = (Horarios) res;
+			int dia = convertirDia(horario.getId().getDia());
 			int hora = Integer.parseInt(horario.getId().getHora());
-			planSemanal[hora-1][dia] = horario.getModulos().getNombre();
+			horarioSemanal[hora - 1][dia] = horario.getModulos().getNombre();
 		}
-
-		return planSemanal;
+		return horarioSemanal;
 	}
 	
-	private int conseguirDia(String string) {
-		// TODO Auto-generated method stub
+	private int convertirDia(String diaString) {
 		int dia = 0;
-		if (string.equals("L/A")) {
+		switch (diaString) {
+		case "L/A":
 			dia = 1;
-		} else if (string.equals("M/A")) {
+			break;
+		case "M/A":
 			dia = 2;
-		} else if (string.equals("X")) {
+			break;
+		case "X":
 			dia = 3;
-		} else if (string.equals("J/O")) {
+			break;
+		case "J/O":
 			dia = 4;
-		} else if (string.equals("V/O")) {
+			break;
+		case "V/O":
 			dia = 5;
-		} else if (string.equals("S/L")) {
+			break;
+		case "S/L":
 			dia = 6;
-		} else if (string.equals("D/I")) {
+			break;
+		case "D/I":
 			dia = 7;
+			break;
+
+		default:
+			dia = 0;
+			break;
 		}
 		return dia;
 	}

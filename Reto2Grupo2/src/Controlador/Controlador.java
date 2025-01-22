@@ -46,7 +46,6 @@ public class Controlador implements ActionListener {
 
 	private void inicializarControlador() {
 
-		
 		try {
 			socketCliente = new Socket("localhost", 2845);
 			oos = new ObjectOutputStream(socketCliente.getOutputStream());
@@ -87,7 +86,7 @@ public class Controlador implements ActionListener {
 				}
 			}
 		});
-		
+
 		panelLogin.getPfPass().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -186,39 +185,48 @@ public class Controlador implements ActionListener {
 
 		}
 	}
-	
+
 	private void mMostrarReuniones() {
-		
-	try {		
-			
+
+		try {
+
 			dos.writeInt(6);
 			dos.flush();
-			
-			dos.writeInt(0);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
+			Thread.sleep(500);
+
+			String[][] reunionesUser = (String[][]) ois.readObject(); // Leer el objeto
+			System.out.println("Reuniones recibidas: " + Arrays.deepToString(reunionesUser));
+
+			// Actualizar la tabla con los datos del horario
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
+					.getModel();
+
+			for (int i = 0; i < reunionesUser.length; i++) {
+				for (int j = 1; j < reunionesUser[i].length; j++) { // Ignorar la columna de las horas
+					modelo.setValueAt(reunionesUser[i][j], i + 1, j);
+				}
+			}
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		
 	}
-	
-	
+
 	private void desconectar() {
-		
+
 		usuarioLogeado = null;
-		
+
 		this.vistaPrincipal.getPanelLogin().getTfUser().setText("");
 		this.vistaPrincipal.getPanelLogin().getPfPass().setText("");
 	}
 
 	private void mCrearUsuario() {
-		
-		try {		
-			
+
+		try {
+
 			dos.writeInt(5);
-			dos.flush();			
-			
+			dos.flush();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -238,44 +246,45 @@ public class Controlador implements ActionListener {
 
 				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor.getNombre());
 			}
-			
-			 this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
-		            
-		            String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().getSelectedItem();
-		            
-		            for (Users users : listaProfesores) {
-						if(users.getNombre()==selectedProfesor) {
-							try {
-								
-								dos.writeInt(4);
-								dos.flush();
-								
-								dos.writeInt(users.getId());
-								dos.flush();
-								
-								String[][] horarioUser = (String[][]) ois.readObject(); 
-						        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
 
-						        
-						        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelOtrosHorarios().getTablaHorario().getModel();
+			this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
 
-						        for (int i = 0; i < horarioUser.length; i++) {
-						            for (int j = 1; j < horarioUser[i].length; j++) { 
-						                modelo.setValueAt(horarioUser[i][j], i + 1, j);
-						            }
-						        }
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (ClassNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+				String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores()
+						.getSelectedItem();
+
+				for (Users users : listaProfesores) {
+					if (users.getNombre() == selectedProfesor) {
+						try {
+
+							dos.writeInt(4);
+							dos.flush();
+
+							dos.writeInt(users.getId());
+							dos.flush();
+
+							String[][] horarioUser = (String[][]) ois.readObject();
+							System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+
+							DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelOtrosHorarios()
+									.getTablaHorario().getModel();
+
+							for (int i = 0; i < horarioUser.length; i++) {
+								for (int j = 1; j < horarioUser[i].length; j++) {
+									modelo.setValueAt(horarioUser[i][j], i + 1, j);
+								}
 							}
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
 					}
-	            
-		        });
-	
+				}
+
+			});
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -285,64 +294,57 @@ public class Controlador implements ActionListener {
 		}
 
 	}
-	
-	
-	
+
 	private void mMostrarHorarios() {
-	    try {
-	        dos.writeInt(2); 
-	        dos.flush();
-	        
+		try {
+			dos.writeInt(2);
+			dos.flush();
 
-	        Thread.sleep(500); 
+			Thread.sleep(500);
 
-	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
-	        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+			String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
+			System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
 
-	        // Actualizar la tabla con los datos del horario
-	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelHorario().getTablaHorario().getModel();
+			// Actualizar la tabla con los datos del horario
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelHorario().getTablaHorario()
+					.getModel();
 
-	        for (int i = 0; i < horarioUser.length; i++) {
-	            for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
-	                modelo.setValueAt(horarioUser[i][j], i + 1, j);
-	            }
-	        }
-	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
-	        e.printStackTrace();
-	    }
+			for (int i = 0; i < horarioUser.length; i++) {
+				for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
+					modelo.setValueAt(horarioUser[i][j], i + 1, j);
+				}
+			}
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
-
 
 	private void mConfirmarLogin(enumAcciones accion) {
 		// TODO Auto-generated method stub
-				try {
-					dos.writeInt(1);
-					dos.flush();
-					dos.writeUTF(this.vistaPrincipal.getPanelLogin().getTfUser().getText());
-					dos.flush();
-					dos.writeUTF(new String(this.vistaPrincipal.getPanelLogin().getPfPass().getPassword()));
-					dos.flush();
-					dos.writeUTF(TIPO_USUARIO);
-					dos.flush();
-					loginCorrecto = dis.readBoolean();
-					
-					
-					
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		try {
+			dos.writeInt(1);
+			dos.flush();
+			dos.writeUTF(this.vistaPrincipal.getPanelLogin().getTfUser().getText());
+			dos.flush();
+			dos.writeUTF(new String(this.vistaPrincipal.getPanelLogin().getPfPass().getPassword()));
+			dos.flush();
+			dos.writeUTF(TIPO_USUARIO);
+			dos.flush();
+			loginCorrecto = dis.readBoolean();
 
-				if (loginCorrecto) {
-					
-					this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
-					conexionActiva = true;
-					
-				} else {
-					JOptionPane.showMessageDialog(null, "Login incorrecto");
-				}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (loginCorrecto) {
+
+			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
+			conexionActiva = true;
+
+		} else {
+			JOptionPane.showMessageDialog(null, "Login incorrecto");
+		}
 	}
 
 	private synchronized void cerrarVentana() {
@@ -388,7 +390,5 @@ public class Controlador implements ActionListener {
 		dis = null;
 		socketCliente = null;
 	}
-
-	
 
 }
