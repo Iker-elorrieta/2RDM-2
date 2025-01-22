@@ -3,6 +3,7 @@ package Modelo;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -124,8 +125,28 @@ public class Reuniones implements java.io.Serializable {
 		this.fecha = fecha;
 	}
 	
-	public String[][] obtenerReunionesPorID(int userId) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+	public List<Reuniones> obtenerReunionesPorID(int userId) {
+		
+		
+		List<Reuniones> reuniones = new ArrayList<Reuniones>();
+		
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		String hql = "from Reuniones where usersByProfesorId = " + userId + " ";
+		Query q = sesion.createQuery(hql);
+		List<?> listaReuniones = q.list();
+		
+		for (Object res : listaReuniones) {
+			Reuniones reunion = (Reuniones) res;
+			reuniones.add(reunion);
+			
+		}
+		
+		return reuniones;
+	}
+	
+	
+	/*DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 		
 		String[][] horarioReuniones = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
 				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
@@ -169,6 +190,6 @@ System.out.println(reunion.getFecha().toString());
 		}
 		
 		return horarioReuniones;
-	}
+	}*/
 
 }

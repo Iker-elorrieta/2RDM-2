@@ -90,8 +90,8 @@ public class HiloConexion extends Thread {
 		try {
 		       
 
-	        String[][] reunionesUser = new Reuniones().obtenerReunionesPorID(userLogeado.getId()); 
-	        System.out.println("Horario generado: " + Arrays.deepToString(reunionesUser));
+	        List<Reuniones> reunionesUser = new Reuniones().obtenerReunionesPorID(userLogeado.getId()); 
+	       
 
 	        System.out.println("Enviando objeto reunionesUser");
 	        oos.writeObject(reunionesUser); 
