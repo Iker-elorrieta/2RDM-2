@@ -151,6 +151,11 @@ public class Controlador implements ActionListener {
 		;
 		this.vistaPrincipal.getPanelReuniones().getBtnVolver()
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
+		
+		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_REUNIONES_PENDIENTES.toString());
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -180,6 +185,10 @@ public class Controlador implements ActionListener {
 			this.vistaPrincipal.mVisualizarPaneles(accion);
 			mMostrarReuniones();
 			break;
+		case CARGAR_PANEL_REUNIONES_PENDIENTES:
+			this.vistaPrincipal.mVisualizarPaneles(accion);
+			mMostrarReunionesPendientes();
+			break;
 		case DESCONECTAR:
 			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_LOGIN);
 			desconectar();
@@ -191,6 +200,11 @@ public class Controlador implements ActionListener {
 			break;
 
 		}
+	}
+
+	private void mMostrarReunionesPendientes() {
+		
+		
 	}
 
 	private void mMostrarReuniones() {
@@ -253,13 +267,16 @@ public class Controlador implements ActionListener {
 			                String estado = partes[1];
 
 			                if ("pendiente".equals(estado)) {
-			                    componente.setBackground(Color.GRAY); // Cambiar a gris para "pendiente"
+			                    componente.setBackground(Color.YELLOW); // Cambiar a gris para "pendiente"
 			                    componente.setForeground(Color.BLACK);
-			                } else if ("finalizada".equals(estado)) {
+			                } else if ("aceptada".equals(estado)) {
 			                    componente.setBackground(Color.GREEN);
 			                    componente.setForeground(Color.BLACK);
-			                } else {
-			                    componente.setBackground(Color.WHITE);
+			                } else if("denegada".equals(estado)) {
+			                    componente.setBackground(Color.RED);
+			                    componente.setForeground(Color.BLACK);
+			                } else if("conflicto".equals(estado)) {
+			                	componente.setBackground(Color.GRAY);
 			                    componente.setForeground(Color.BLACK);
 			                }
 

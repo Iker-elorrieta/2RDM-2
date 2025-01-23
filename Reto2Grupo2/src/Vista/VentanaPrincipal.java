@@ -17,6 +17,7 @@ public class VentanaPrincipal extends JFrame {
 	private PanelHorario panelHorario;
 	private PanelOtrosHorarios panelOtrosHorarios;
 	private PanelReuniones panelReuniones;
+	private PanelReunionesPendientes panelReunionesPendientes;
 
 	// Acciones
 	public static enum enumAcciones {
@@ -25,6 +26,7 @@ public class VentanaPrincipal extends JFrame {
 		CARGAR_PANEL_HORARIO, 
 		CARGAR_PANEL_OTROS_HORARIOS,
 		CARGAR_PANEL_REUNIONES,
+		CARGAR_PANEL_REUNIONES_PENDIENTES,
 		DESCONECTAR, CREAR_USUARIO
 
 	}
@@ -39,6 +41,7 @@ public class VentanaPrincipal extends JFrame {
 		mCrearPanelHorario();
 		mCrearPanelOtrosHorarios();
 		mCrearPanelReuniones();
+		mCrearPanelReunionesPendientes();
 	}
 
 	// *** Creaci�n de paneles ***
@@ -99,6 +102,15 @@ public class VentanaPrincipal extends JFrame {
 		panelReuniones.setVisible(false);
 
 	}
+	
+	private void mCrearPanelReunionesPendientes() {
+		panelReunionesPendientes = new PanelReunionesPendientes();
+		panelReunionesPendientes.setLocation(0, 11);
+		panelContenedor.add(panelReunionesPendientes);
+		panelContenedor.setBounds(panelReunionesPendientes.getBounds());
+		panelReunionesPendientes.setVisible(false);
+
+	}
 
 	// *** FIN creaci�n de paneles ***
 
@@ -109,6 +121,7 @@ public class VentanaPrincipal extends JFrame {
 		panelHorario.setVisible(false);
 		panelOtrosHorarios.setVisible(false);
 		panelReuniones.setVisible(false);
+		panelReunionesPendientes.setVisible(false);
 
 		switch (panel) {
 		case CARGAR_PANEL_LOGIN:
@@ -127,7 +140,9 @@ public class VentanaPrincipal extends JFrame {
 		case CARGAR_PANEL_REUNIONES:
 			panelReuniones.setVisible(true);
 			break;
-
+		case CARGAR_PANEL_REUNIONES_PENDIENTES:
+			panelReunionesPendientes.setVisible(true);
+			break;
 		default:
 			break;
 			

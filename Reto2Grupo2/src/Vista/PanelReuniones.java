@@ -12,7 +12,7 @@ public class PanelReuniones extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTable tablaHorario;
-	private JButton btnVolver;
+	private JButton btnVolver, btnReunionesPendientes;
 
 	/**
 	 * Create the panel.
@@ -36,6 +36,11 @@ public class PanelReuniones extends JPanel {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(67, 45, 424, 55);
 		add(lblNewLabel);
+		
+		btnReunionesPendientes = new JButton("Reuniones pendientes");
+		btnReunionesPendientes.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnReunionesPendientes.setBounds(250, 355, 203, 25);
+		add(btnReunionesPendientes);
 
 	}
 
@@ -53,6 +58,17 @@ public class PanelReuniones extends JPanel {
 
 	public void setBtnVolver(JButton btnVolver) {
 		this.btnVolver = btnVolver;
+	}
+	
+	
+	
+
+	public JButton getBtnReunionesPendientes() {
+		return btnReunionesPendientes;
+	}
+
+	public void setBtnReunionesPendientes(JButton btnReunionesPendientes) {
+		this.btnReunionesPendientes = btnReunionesPendientes;
 	}
 
 	private DefaultTableModel generarModeloTabla() {
