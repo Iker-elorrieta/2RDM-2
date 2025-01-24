@@ -145,6 +145,26 @@ public class Reuniones implements java.io.Serializable {
 		return reuniones;
 	}
 	
+	public List<Reuniones> obtenerReunionesPendientes() {
+		
+		
+		List<Reuniones> reuniones = new ArrayList<Reuniones>();
+		
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+		String hql = "from Reuniones where estado = 'pendiente'";
+		Query q = sesion.createQuery(hql);
+		List<?> listaReuniones = q.list();
+		
+		for (Object res : listaReuniones) {
+			Reuniones reunion = (Reuniones) res;
+			reuniones.add(reunion);
+			
+		}
+		
+		return reuniones;
+	}
+	
 	
 	/*DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 		

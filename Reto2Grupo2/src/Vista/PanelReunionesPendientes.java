@@ -45,6 +45,16 @@ private static final long serialVersionUID = 1L;
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBounds(67, 111, 488, 226); // Ajustar posición y tamaño
         add(scrollPane);
+        
+        JButton btnAceptar = new JButton("Aceptar");
+        btnAceptar.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnAceptar.setBounds(253, 357, 89, 23);
+        add(btnAceptar);
+        
+        JButton btnRechazar = new JButton("Rechazar");
+        btnRechazar.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnRechazar.setBounds(390, 357, 122, 23);
+        add(btnRechazar);
     }
 
     public JButton getBtnVolver() {

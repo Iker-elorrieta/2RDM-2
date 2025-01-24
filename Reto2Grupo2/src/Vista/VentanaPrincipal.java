@@ -198,6 +198,16 @@ public class VentanaPrincipal extends JFrame {
 	public void setPanelReuniones(PanelReuniones panelReuniones) {
 		this.panelReuniones = panelReuniones;
 	}
+
+	public PanelReunionesPendientes getPanelReunionesPendientes() {
+		return panelReunionesPendientes;
+	}
+
+	public void setPanelReunionesPendientes(PanelReunionesPendientes panelReunionesPendientes) {
+		this.panelReunionesPendientes = panelReunionesPendientes;
+	}
+	
+	
 	
 	
 

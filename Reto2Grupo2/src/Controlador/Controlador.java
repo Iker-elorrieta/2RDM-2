@@ -26,8 +26,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import Modelo.Reuniones;
-import Modelo.Users;
 import Vista.PanelLogin;
 import Vista.VentanaPrincipal;
 import Vista.VentanaPrincipal.enumAcciones;
@@ -35,7 +33,6 @@ import Vista.VentanaPrincipal.enumAcciones;
 public class Controlador implements ActionListener {
 
 	private Vista.VentanaPrincipal vistaPrincipal;
-	private Users usuarioLogeado;
 	private Socket socketCliente;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
@@ -151,11 +148,19 @@ public class Controlador implements ActionListener {
 		;
 		this.vistaPrincipal.getPanelReuniones().getBtnVolver()
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
-		
+
 		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes().addActionListener(this);
 		;
 		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes()
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_REUNIONES_PENDIENTES.toString());
+
+		// VENTANA
+		// REUNIONES PENDIENTES---------------------------------------------------------------------------------------------------------
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -203,118 +208,133 @@ public class Controlador implements ActionListener {
 	}
 
 	private void mMostrarReunionesPendientes() {
+
+		try {
+			
+			
+			
+			dos.writeInt(7);
+			dos.flush();
+			
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReunionesPendientes().getTable()
+					.getModel();
+			
+			modelo.setRowCount(0);
+			
+			List<Object[]> listaReunionesPendientes = (List<Object[]>) ois.readObject();
+			
+			for (Object[] reunion : listaReunionesPendientes) {
+				
+				modelo.addRow(reunion);
+			}
+		
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}
 
 	private void mMostrarReuniones() {
+	    try {
+	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
+	                .getModel();
 
-		try {
-			
-			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
-					.getModel();
-			
-			String[][] horarioReuniones = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
-					{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
-			
-			dos.writeInt(6);
-			dos.flush();
+	        dos.writeInt(6);
+	        dos.flush();
 
-			Thread.sleep(500);
+	        Thread.sleep(500);
 
-			List<Reuniones> reuniones =  (List<Reuniones>) ois.readObject(); // Leer el objeto
-			
-			for (Reuniones reunion : reuniones) {
-			    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
-			    LocalDateTime fechaHora = LocalDateTime.parse(reunion.getFecha().toString(), formatter);
+	        String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
 
-			    int dia = fechaHora.getDayOfWeek().getValue();
-			    int hora = fechaHora.getHour();
+	        dos.writeInt(2);
+	        dos.flush();
 
-			    // Ajuste de hora para índice de la tabla
-			    switch (hora) {
-			        case 8: hora = 1; break;
-			        case 9: hora = 2; break;
-			        case 10: hora = 3; break;
-			        case 11: hora = 4; break;
-			        case 12: hora = 5; break;
-			    }
+	        Thread.sleep(500);
 
-			    if (hora >= 1 && hora <= 5 && dia >= 1 && dia <= 5) {
-			        String tituloConEstado = reunion.getTitulo() + "|" + reunion.getEstado();
-			        horarioReuniones[hora - 1][dia] = tituloConEstado;
-			    }
-			}
+	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
 
-			// Actualizar la tabla con los datos del horario
-			for (int i = 0; i < horarioReuniones.length; i++) {
-			    for (int j = 1; j < horarioReuniones[i].length; j++) { // Ignorar la columna de las horas
-			        modelo.setValueAt(horarioReuniones[i][j], i + 1, j);
-			    }
-			}
+	        // Actualizar la tabla con los datos del horario
+	        for (int i = 0; i < reuniones.length; i++) {
+	            for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
+	                if (!reuniones[i][j].isEmpty() && !horarioUser[i][j].isEmpty()) {
+	                    // Cambiar el estado a "conflicto"
+	                    String[] partes = reuniones[i][j].split("\\|");
+	                    if (partes.length > 1) {
+	                        partes[1] = "conflicto"; // Cambiar el estado
+	                        reuniones[i][j] = partes[0] + "|" + partes[1]; // Reasignar el valor
+	                    } else {
+	                        reuniones[i][j] += "|conflicto"; // Si no tiene estado, agregar "conflicto"
+	                    }
+	                }
 
-			// Renderizador de colores para las celdas según estado
-			DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
-			    @Override
-			    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-			                                                   boolean hasFocus, int row, int column) {
-			        Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	                // Actualizar el modelo de la tabla
+	                modelo.setValueAt(reuniones[i][j], i, j);
+	            }
+	        }
 
-			        if (column > 0 && value != null) { // Ignorar la columna de las horas
-			            String texto = value.toString();
-			            if (texto.contains("|")) {
-			                String[] partes = texto.split("\\|");
-			                String estado = partes[1];
+	        // Renderizador de colores para las celdas según estado
+	        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+	            @Override
+	            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+	                    boolean hasFocus, int row, int column) {
+	                Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+	                        column);
 
-			                if ("pendiente".equals(estado)) {
-			                    componente.setBackground(Color.YELLOW); // Cambiar a gris para "pendiente"
-			                    componente.setForeground(Color.BLACK);
-			                } else if ("aceptada".equals(estado)) {
-			                    componente.setBackground(Color.GREEN);
-			                    componente.setForeground(Color.BLACK);
-			                } else if("denegada".equals(estado)) {
-			                    componente.setBackground(Color.RED);
-			                    componente.setForeground(Color.BLACK);
-			                } else if("conflicto".equals(estado)) {
-			                	componente.setBackground(Color.GRAY);
-			                    componente.setForeground(Color.BLACK);
-			                }
+	                if (column > 0 && value != null) { // Ignorar la columna de las horas
+	                    String texto = value.toString();
+	                    if (texto.contains("|")) {
+	                        String[] partes = texto.split("\\|");
+	                        String estado = partes[1];
 
-			                // Mostrar solo el título, sin el estado
-			                setText(partes[0]);
-			            } else {
-			                componente.setBackground(Color.WHITE);
-			                componente.setForeground(Color.BLACK);
-			            }
-			        } else {
-			            componente.setBackground(Color.WHITE);
-			            componente.setForeground(Color.BLACK);
-			        }
+	                        if ("pendiente".equals(estado)) {
+	                            componente.setBackground(Color.YELLOW);
+	                            componente.setForeground(Color.BLACK);
+	                        } else if ("aceptada".equals(estado)) {
+	                            componente.setBackground(Color.GREEN);
+	                            componente.setForeground(Color.BLACK);
+	                        } else if ("denegada".equals(estado)) {
+	                            componente.setBackground(Color.RED);
+	                            componente.setForeground(Color.BLACK);
+	                        } else if ("conflicto".equals(estado)) {
+	                            componente.setBackground(Color.GRAY);
+	                            componente.setForeground(Color.BLACK);
+	                        }
 
-			        if (isSelected) {
-			            componente.setBackground(Color.BLUE);
-			            componente.setForeground(Color.WHITE);
-			        }
+	                        // Mostrar solo el título, sin el estado
+	                        setText(partes[0]);
+	                    } else {
+	                        componente.setBackground(Color.WHITE);
+	                        componente.setForeground(Color.BLACK);
+	                    }
+	                } else {
+	                    componente.setBackground(Color.WHITE);
+	                    componente.setForeground(Color.BLACK);
+	                }
 
-			        return componente;
-			    }
-			};
+	                if (isSelected) {
+	                    componente.setBackground(Color.BLUE);
+	                    componente.setForeground(Color.WHITE);
+	                }
 
-			this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
-			
-			
-			
-			
+	                return componente;
+	            }
+	        };
 
-			
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
-			e.printStackTrace();
-		}
+	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+
+	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
+	        e.printStackTrace();
+	    }
 	}
 
-	private void desconectar() {
 
-		usuarioLogeado = null;
+	private void desconectar() {
 
 		this.vistaPrincipal.getPanelLogin().getTfUser().setText("");
 		this.vistaPrincipal.getPanelLogin().getPfPass().setText("");
@@ -337,14 +357,16 @@ public class Controlador implements ActionListener {
 
 		try {
 
+			this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().removeAllItems();
+
 			dos.writeInt(3);
 			dos.flush();
 
-			List<Users> listaProfesores = (List<Users>) ois.readObject();
+			List<String> listaProfesores = (List<String>) ois.readObject();
 
-			for (Users profesor : listaProfesores) {
+			for (String profesor : listaProfesores) {
 
-				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor.getNombre());
+				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor);
 			}
 
 			this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
@@ -352,14 +374,14 @@ public class Controlador implements ActionListener {
 				String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores()
 						.getSelectedItem();
 
-				for (Users users : listaProfesores) {
-					if (users.getNombre() == selectedProfesor) {
+				for (String profesor : listaProfesores) {
+					if (profesor == selectedProfesor) {
 						try {
 
 							dos.writeInt(4);
 							dos.flush();
 
-							dos.writeInt(users.getId());
+							dos.writeUTF(profesor);
 							dos.flush();
 
 							String[][] horarioUser = (String[][]) ois.readObject();
@@ -370,7 +392,7 @@ public class Controlador implements ActionListener {
 
 							for (int i = 0; i < horarioUser.length; i++) {
 								for (int j = 1; j < horarioUser[i].length; j++) {
-									modelo.setValueAt(horarioUser[i][j], i + 1, j);
+									modelo.setValueAt(horarioUser[i][j], i, j);
 								}
 							}
 						} catch (IOException e1) {
@@ -382,7 +404,6 @@ public class Controlador implements ActionListener {
 						}
 					}
 				}
-
 			});
 
 		} catch (ClassNotFoundException e) {
@@ -411,7 +432,7 @@ public class Controlador implements ActionListener {
 
 			for (int i = 0; i < horarioUser.length; i++) {
 				for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
-					modelo.setValueAt(horarioUser[i][j], i + 1, j);
+					modelo.setValueAt(horarioUser[i][j], i, j);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | InterruptedException e) {
