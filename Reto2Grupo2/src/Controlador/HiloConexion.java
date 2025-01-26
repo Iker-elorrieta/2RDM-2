@@ -60,6 +60,9 @@ public class HiloConexion extends Thread {
 					case 7:
 						cargarReunionesPendientes(ois, oos);
 						break;
+					case 8:
+						actualizarEstado(dis, dos);
+						break;
 					case -1:
 						System.out.println("Cliente solicitó desconexión.");
 						continuar = false;
@@ -87,39 +90,60 @@ public class HiloConexion extends Thread {
 		}
 	}
 
+	private void actualizarEstado(DataInputStream dis, DataOutputStream dos) {
+		
+		try {
+			
+			String estado = dis.readUTF();
+			
+			int idRunion = dis.readInt();
+			
+			new Reuniones().actualizarReunionesPorID(idRunion, estado);
+			
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 	private void cargarReunionesPendientes(ObjectInputStream ois, ObjectOutputStream oos) {
 		// TODO Auto-generated method stub
 
 		try {
-			
-		
-		
-		List<Reuniones> reunionesPendientes = new Reuniones().obtenerReunionesPendientes();
 
-		List<Object[]> listaReunionesPendientes = new ArrayList<>();
+			List<Reuniones> reunionesPendientes = new Reuniones().obtenerReunionesPendientes();
 
-		for (Reuniones reunion : reunionesPendientes) {
+			List<Object[]> listaReunionesPendientes = new ArrayList<>();
 
-			listaReunionesPendientes.add(new Object[]{
-				    reunion.getEstado() != null && !reunion.getEstado().isEmpty() ? reunion.getEstado() : "Campo vacío",
-				    reunion.getIdReunion() != null ? reunion.getIdReunion() : "Campo vacío",
-				    reunion.getEstadoEus() != null && !reunion.getEstadoEus().isEmpty() ? reunion.getEstadoEus() : "Campo vacío",
-				    reunion.getUsersByProfesorId() != null ? reunion.getUsersByProfesorId().toString() : "Campo vacío",
-				    reunion.getUsersByAlumnoId() != null ? reunion.getUsersByAlumnoId().toString() : "Campo vacío",
-				    reunion.getIdCentro() != null ? reunion.getIdCentro() : "Campo vacío",
-				    reunion.getTitulo() != null && !reunion.getTitulo().isEmpty() ? reunion.getTitulo() : "Campo vacío",
-				    reunion.getAsunto() != null && !reunion.getAsunto().isEmpty() ? reunion.getAsunto() : "Campo vacío",
-				    reunion.getAula() != null && !reunion.getAula().isEmpty() ? reunion.getAula() : "Campo vacío",
-				    reunion.getFecha() != null ? reunion.getFecha() : "Campo vacío"
-				});
+			for (Reuniones reunion : reunionesPendientes) {
 
-		}
-		
-		
+				listaReunionesPendientes.add(new Object[] {
+						reunion.getEstado() != null && !reunion.getEstado().isEmpty() ? reunion.getEstado()
+								: "Campo vacío",
+						reunion.getIdReunion() != null ? reunion.getIdReunion() : "Campo vacío",
+						reunion.getEstadoEus() != null && !reunion.getEstadoEus().isEmpty() ? reunion.getEstadoEus()
+								: "Campo vacío",
+						reunion.getUsersByProfesorId() != null ? reunion.getUsersByProfesorId().toString()
+								: "Campo vacío",
+						reunion.getUsersByAlumnoId() != null ? reunion.getUsersByAlumnoId().toString() : "Campo vacío",
+						reunion.getIdCentro() != null ? reunion.getIdCentro() : "Campo vacío",
+						reunion.getTitulo() != null && !reunion.getTitulo().isEmpty() ? reunion.getTitulo()
+								: "Campo vacío",
+						reunion.getAsunto() != null && !reunion.getAsunto().isEmpty() ? reunion.getAsunto()
+								: "Campo vacío",
+						reunion.getAula() != null && !reunion.getAula().isEmpty() ? reunion.getAula() : "Campo vacío",
+						reunion.getFecha() != null ? reunion.getFecha() : "Campo vacío" });
+
+			}
+
 			oos.writeObject(listaReunionesPendientes);
 			oos.flush();
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

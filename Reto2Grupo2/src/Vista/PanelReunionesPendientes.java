@@ -15,7 +15,7 @@ public class PanelReunionesPendientes extends JPanel {
 
 private static final long serialVersionUID = 1L;
     
-    private JButton btnVolver;
+    private JButton btnVolver, btnAceptar, btnRechazar;
     private JTable table;
 
     /**
@@ -46,12 +46,12 @@ private static final long serialVersionUID = 1L;
         scrollPane.setBounds(67, 111, 488, 226); // Ajustar posición y tamaño
         add(scrollPane);
         
-        JButton btnAceptar = new JButton("Aceptar");
+        btnAceptar = new JButton("Aceptar");
         btnAceptar.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnAceptar.setBounds(253, 357, 89, 23);
         add(btnAceptar);
         
-        JButton btnRechazar = new JButton("Rechazar");
+        btnRechazar = new JButton("Rechazar");
         btnRechazar.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnRechazar.setBounds(390, 357, 122, 23);
         add(btnRechazar);
@@ -73,6 +73,22 @@ private static final long serialVersionUID = 1L;
         this.table = table;
     }
     
+    public JButton getBtnAceptar() {
+		return btnAceptar;
+	}
+
+	public void setBtnAceptar(JButton btnAceptar) {
+		this.btnAceptar = btnAceptar;
+	}
+
+	public JButton getBtnRechazar() {
+		return btnRechazar;
+	}
+
+	public void setBtnRechazar(JButton btnRechazar) {
+		this.btnRechazar = btnRechazar;
+	}
+    
     private DefaultTableModel generarModeloTabla() {
         DefaultTableModel modeloTabla = new DefaultTableModel(
                 null, // Sin datos iniciales
@@ -82,4 +98,8 @@ private static final long serialVersionUID = 1L;
         );
         return modeloTabla;
     }
+
+	
+    
+    
 }

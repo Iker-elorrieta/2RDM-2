@@ -9,6 +9,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class Reuniones implements java.io.Serializable {
 
@@ -124,6 +125,44 @@ public class Reuniones implements java.io.Serializable {
 	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
 	}
+	
+	public void actualizarReunionesPorID(int reunionId, String estado) {
+	    // Obtener la fábrica de sesiones
+	    SessionFactory sf = HibernateUtil.getSessionFactory();
+	    Session sesion = sf.openSession();
+	    Transaction tx = null;
+
+	    try {
+	        // Iniciar la transacción
+	        tx = sesion.beginTransaction();
+
+	        // Crear una consulta HQL para actualizar directamente
+	        String hql = "update Reuniones set estado = :estado where idReunion = :reunionId";
+	        Query query = sesion.createQuery(hql);
+	        query.setParameter("estado", estado);
+	        query.setParameter("reunionId", reunionId);
+
+	        // Ejecutar la actualización
+	        int filasActualizadas = query.executeUpdate();
+
+	        // Confirmar la transacción
+	        tx.commit();
+
+	        if (filasActualizadas > 0) {
+	            System.out.println("Reunión actualizada con éxito.");
+	        } else {
+	            System.out.println("No se encontró ninguna reunión con el ID proporcionado.");
+	        }
+	    } catch (Exception e) {
+	        if (tx != null) {
+	            tx.rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        sesion.close();
+	    }
+	}
+
 	
 	public List<Reuniones> obtenerReunionesPorID(int userId) {
 		

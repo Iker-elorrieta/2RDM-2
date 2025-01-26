@@ -155,12 +155,23 @@ public class Controlador implements ActionListener {
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_REUNIONES_PENDIENTES.toString());
 
 		// VENTANA
-		// REUNIONES PENDIENTES---------------------------------------------------------------------------------------------------------
+		// REUNIONES
+		// PENDIENTES---------------------------------------------------------------------------------------------------------
 
 		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver().addActionListener(this);
 		;
 		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver()
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnAceptar().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnAceptar()
+				.setActionCommand(VentanaPrincipal.enumAcciones.ACEPTAR_ESTADO_REUNION.toString());
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnRechazar().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnRechazar()
+				.setActionCommand(VentanaPrincipal.enumAcciones.DENEGAR_ESTADO_REUNION.toString());
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -201,34 +212,96 @@ public class Controlador implements ActionListener {
 		case CREAR_USUARIO:
 			mCrearUsuario();
 			break;
+		case ACEPTAR_ESTADO_REUNION:
+			mAceptarEstado();
+			mMostrarReunionesPendientes();
+			break;
+		case DENEGAR_ESTADO_REUNION:
+			mDenegarEstado();
+			mMostrarReunionesPendientes();
 		default:
 			break;
 
 		}
 	}
 
+	private void mAceptarEstado() {
+
+		try {
+			int column = 1;
+			int row = this.vistaPrincipal.getPanelReunionesPendientes().getTable().getSelectedRow();
+
+			if (row != -1) {
+
+				int idReunion = (int) this.vistaPrincipal.getPanelReunionesPendientes().getTable().getModel()
+						.getValueAt(row, column);
+
+				System.out.println(idReunion);
+
+				dos.writeInt(8);
+				dos.flush();
+
+				dos.writeUTF("aceptada");
+
+				dos.writeInt(idReunion);
+
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void mDenegarEstado() {
+
+		try {
+			int column = 1;
+			int row = this.vistaPrincipal.getPanelReunionesPendientes().getTable().getSelectedRow();
+
+			if (row != -1) {
+
+				int idReunion = (int) this.vistaPrincipal.getPanelReunionesPendientes().getTable().getModel()
+						.getValueAt(row, column);
+
+				System.out.println(idReunion);
+
+				dos.writeInt(8);
+				dos.flush();
+
+				dos.writeUTF("denegada");
+
+				dos.writeInt(idReunion);
+
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	private void mMostrarReunionesPendientes() {
 
 		try {
-			
-			
-			
+
 			dos.writeInt(7);
 			dos.flush();
-			
+
 			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReunionesPendientes().getTable()
 					.getModel();
-			
+
 			modelo.setRowCount(0);
-			
+
 			List<Object[]> listaReunionesPendientes = (List<Object[]>) ois.readObject();
-			
+
 			for (Object[] reunion : listaReunionesPendientes) {
-				
+
 				modelo.addRow(reunion);
 			}
-		
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -236,103 +309,101 @@ public class Controlador implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	private void mMostrarReuniones() {
-	    try {
-	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
-	                .getModel();
+		try {
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
+					.getModel();
 
-	        dos.writeInt(6);
-	        dos.flush();
+			dos.writeInt(6);
+			dos.flush();
 
-	        Thread.sleep(500);
+			Thread.sleep(500);
 
-	        String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
+			String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
 
-	        dos.writeInt(2);
-	        dos.flush();
+			dos.writeInt(2);
+			dos.flush();
 
-	        Thread.sleep(500);
+			Thread.sleep(500);
 
-	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
+			String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
 
-	        // Actualizar la tabla con los datos del horario
-	        for (int i = 0; i < reuniones.length; i++) {
-	            for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
-	                if (!reuniones[i][j].isEmpty() && !horarioUser[i][j].isEmpty()) {
-	                    // Cambiar el estado a "conflicto"
-	                    String[] partes = reuniones[i][j].split("\\|");
-	                    if (partes.length > 1) {
-	                        partes[1] = "conflicto"; // Cambiar el estado
-	                        reuniones[i][j] = partes[0] + "|" + partes[1]; // Reasignar el valor
-	                    } else {
-	                        reuniones[i][j] += "|conflicto"; // Si no tiene estado, agregar "conflicto"
-	                    }
-	                }
+			// Actualizar la tabla con los datos del horario
+			for (int i = 0; i < reuniones.length; i++) {
+				for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
+					if (!reuniones[i][j].isEmpty() && !horarioUser[i][j].isEmpty()) {
+						// Cambiar el estado a "conflicto"
+						String[] partes = reuniones[i][j].split("\\|");
+						if (partes.length > 1) {
+							partes[1] = "conflicto"; // Cambiar el estado
+							reuniones[i][j] = partes[0] + "|" + partes[1]; // Reasignar el valor
+						} else {
+							reuniones[i][j] += "|conflicto"; // Si no tiene estado, agregar "conflicto"
+						}
+					}
 
-	                // Actualizar el modelo de la tabla
-	                modelo.setValueAt(reuniones[i][j], i, j);
-	            }
-	        }
+					// Actualizar el modelo de la tabla
+					modelo.setValueAt(reuniones[i][j], i, j);
+				}
+			}
 
-	        // Renderizador de colores para las celdas según estado
-	        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
-	            @Override
-	            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-	                    boolean hasFocus, int row, int column) {
-	                Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-	                        column);
+			// Renderizador de colores para las celdas según estado
+			DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+				@Override
+				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+						boolean hasFocus, int row, int column) {
+					Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+							column);
 
-	                if (column > 0 && value != null) { // Ignorar la columna de las horas
-	                    String texto = value.toString();
-	                    if (texto.contains("|")) {
-	                        String[] partes = texto.split("\\|");
-	                        String estado = partes[1];
+					if (column > 0 && value != null) { // Ignorar la columna de las horas
+						String texto = value.toString();
+						if (texto.contains("|")) {
+							String[] partes = texto.split("\\|");
+							String estado = partes[1];
 
-	                        if ("pendiente".equals(estado)) {
-	                            componente.setBackground(Color.YELLOW);
-	                            componente.setForeground(Color.BLACK);
-	                        } else if ("aceptada".equals(estado)) {
-	                            componente.setBackground(Color.GREEN);
-	                            componente.setForeground(Color.BLACK);
-	                        } else if ("denegada".equals(estado)) {
-	                            componente.setBackground(Color.RED);
-	                            componente.setForeground(Color.BLACK);
-	                        } else if ("conflicto".equals(estado)) {
-	                            componente.setBackground(Color.GRAY);
-	                            componente.setForeground(Color.BLACK);
-	                        }
+							if ("pendiente".equals(estado)) {
+								componente.setBackground(Color.YELLOW);
+								componente.setForeground(Color.BLACK);
+							} else if ("aceptada".equals(estado)) {
+								componente.setBackground(Color.GREEN);
+								componente.setForeground(Color.BLACK);
+							} else if ("denegada".equals(estado)) {
+								componente.setBackground(Color.RED);
+								componente.setForeground(Color.BLACK);
+							} else if ("conflicto".equals(estado)) {
+								componente.setBackground(Color.GRAY);
+								componente.setForeground(Color.BLACK);
+							}
 
-	                        // Mostrar solo el título, sin el estado
-	                        setText(partes[0]);
-	                    } else {
-	                        componente.setBackground(Color.WHITE);
-	                        componente.setForeground(Color.BLACK);
-	                    }
-	                } else {
-	                    componente.setBackground(Color.WHITE);
-	                    componente.setForeground(Color.BLACK);
-	                }
+							// Mostrar solo el título, sin el estado
+							setText(partes[0]);
+						} else {
+							componente.setBackground(Color.WHITE);
+							componente.setForeground(Color.BLACK);
+						}
+					} else {
+						componente.setBackground(Color.WHITE);
+						componente.setForeground(Color.BLACK);
+					}
 
-	                if (isSelected) {
-	                    componente.setBackground(Color.BLUE);
-	                    componente.setForeground(Color.WHITE);
-	                }
+					if (isSelected) {
+						componente.setBackground(Color.BLUE);
+						componente.setForeground(Color.WHITE);
+					}
 
-	                return componente;
-	            }
-	        };
+					return componente;
+				}
+			};
 
-	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+			this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
 
-	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
-	        e.printStackTrace();
-	    }
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-
 
 	private void desconectar() {
 
