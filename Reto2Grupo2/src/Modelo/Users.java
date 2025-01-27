@@ -208,6 +208,35 @@ public class Users implements java.io.Serializable {
 				+ reunionesesForProfesorId + ", reunionesesForAlumnoId=" + reunionesesForAlumnoId + ", horarioses="
 				+ horarioses + "]";
 	}
+	
+	public Users mObtenerUsuarioPorID(int userId) {
+	    SessionFactory sf = HibernateUtil.getSessionFactory();
+	    Session sesion = sf.openSession();
+	    String hql = "from Users where id = :userId";
+	    Query q = sesion.createQuery(hql);
+	    q.setParameter("userId", userId);
+	    Users user = (Users) q.uniqueResult();
+	    sesion.close(); 
+	    return user;
+	}
+	
+	public List<Users> mObtenerAlumnos() {
+		List<Users> listaAlumnos = new ArrayList<Users>();
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+
+		String hqlNombre = "FROM Users WHERE tipos.id = 4";
+		Query q = sesion.createQuery(hqlNombre);
+		List<?> filas = q.list();
+
+		for (Object res : filas) {
+			Users user = (Users) res;
+
+			listaAlumnos.add(user);
+		}
+		return listaAlumnos;
+	}
+
 
 	public Users mObtenerUsuario(String userIntroducido, String passIntroducida, String tipoUsuario) {
 		SessionFactory sf = HibernateUtil.getSessionFactory();
@@ -280,24 +309,7 @@ public class Users implements java.io.Serializable {
 	    return user;
 	}
 
-	public String[][] obtenerHorarioPorId(int userId) {
-		String[][] horarioSemanal = { { "Hora1", "", "", "", "", "" }, { "Hora2", "", "", "", "", "" },
-				{ "Hora3", "", "", "", "", "" }, { "Hora4", "", "", "", "", "" }, { "Hora5", "", "", "", "", "" } };
 
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session sesion = sf.openSession();
-		String hql = "from Horarios where users = " + userId + " ";
-		Query q = sesion.createQuery(hql);
-		List<?> horarios = q.list();
-
-		for (Object res : horarios) {
-			Horarios horario = (Horarios) res;
-			int dia = convertirDia(horario.getId().getDia());
-			int hora = Integer.parseInt(horario.getId().getHora());
-			horarioSemanal[hora - 1][dia] = horario.getModulos().getNombre();
-		}
-		return horarioSemanal;
-	}
 
 	public List<Users> mObtenerProfesores(int userId) {
 		List<Users> listaProfesores = new ArrayList<Users>();
@@ -316,36 +328,6 @@ public class Users implements java.io.Serializable {
 		return listaProfesores;
 	}
 
-	private int convertirDia(String diaString) {
-		int dia = 0;
-		switch (diaString) {
-		case "L/A":
-			dia = 1;
-			break;
-		case "M/A":
-			dia = 2;
-			break;
-		case "X":
-			dia = 3;
-			break;
-		case "J/O":
-			dia = 4;
-			break;
-		case "V/O":
-			dia = 5;
-			break;
-		case "S/L":
-			dia = 6;
-			break;
-		case "D/I":
-			dia = 7;
-			break;
-
-		default:
-			dia = 0;
-			break;
-		}
-		return dia;
-	}
+	
 
 }

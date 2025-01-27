@@ -1,5 +1,7 @@
 package Controlador;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,10 +16,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import Modelo.Users;
@@ -28,7 +34,6 @@ import Vista.VentanaPrincipal.enumAcciones;
 public class Controlador implements ActionListener {
 
 	private Vista.VentanaPrincipal vistaPrincipal;
-	private Users usuarioLogeado;
 	private Socket socketCliente;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
@@ -46,7 +51,6 @@ public class Controlador implements ActionListener {
 
 	private void inicializarControlador() {
 
-		conexionActiva = true;
 		try {
 			socketCliente = new Socket("localhost", 2845);
 			oos = new ObjectOutputStream(socketCliente.getOutputStream());
@@ -64,7 +68,7 @@ public class Controlador implements ActionListener {
 			public void windowClosing(WindowEvent e) {
 				// Solo llamar a desconectar si no se ha hecho ya
 				if (conexionActiva) {
-					desconectar();
+					cerrarVentana();
 				}
 				System.exit(0); // Cierra la aplicación después de desconectar
 			}
@@ -87,7 +91,7 @@ public class Controlador implements ActionListener {
 				}
 			}
 		});
-		
+
 		panelLogin.getPfPass().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -145,6 +149,30 @@ public class Controlador implements ActionListener {
 		;
 		this.vistaPrincipal.getPanelReuniones().getBtnVolver()
 				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
+
+		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReuniones().getBtnReunionesPendientes()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_REUNIONES_PENDIENTES.toString());
+
+		// VENTANA
+		// REUNIONES
+		// PENDIENTES---------------------------------------------------------------------------------------------------------
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnVolver()
+				.setActionCommand(VentanaPrincipal.enumAcciones.CARGAR_PANEL_MENU.toString());
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnAceptar().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnAceptar()
+				.setActionCommand(VentanaPrincipal.enumAcciones.ACEPTAR_ESTADO_REUNION.toString());
+
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnRechazar().addActionListener(this);
+		;
+		this.vistaPrincipal.getPanelReunionesPendientes().getBtnRechazar()
+				.setActionCommand(VentanaPrincipal.enumAcciones.DENEGAR_ESTADO_REUNION.toString());
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -153,7 +181,7 @@ public class Controlador implements ActionListener {
 
 		switch (accion) {
 		case LOGIN:
-			this.mConfirmarLogin(accion);
+			this.mConfirmarLogin(accion);		
 			break;
 		case CARGAR_PANEL_LOGIN:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
@@ -172,6 +200,11 @@ public class Controlador implements ActionListener {
 			break;
 		case CARGAR_PANEL_REUNIONES:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
+			mMostrarReuniones();
+			break;
+		case CARGAR_PANEL_REUNIONES_PENDIENTES:
+			this.vistaPrincipal.mVisualizarPaneles(accion);
+			mMostrarReunionesPendientes();
 			break;
 		case DESCONECTAR:
 			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_LOGIN);
@@ -180,20 +213,214 @@ public class Controlador implements ActionListener {
 		case CREAR_USUARIO:
 			mCrearUsuario();
 			break;
+		case ACEPTAR_ESTADO_REUNION:
+			mAceptarEstado();
+			mMostrarReunionesPendientes();
+			break;
+		case DENEGAR_ESTADO_REUNION:
+			mDenegarEstado();
+			mMostrarReunionesPendientes();
 		default:
 			break;
 
 		}
 	}
 	
-	
+
+
+	private void mAceptarEstado() {
+
+		try {
+			int column = 1;
+			int row = this.vistaPrincipal.getPanelReunionesPendientes().getTable().getSelectedRow();
+
+			if (row != -1) {
+
+				int idReunion = (int) this.vistaPrincipal.getPanelReunionesPendientes().getTable().getModel()
+						.getValueAt(row, column);
+
+				System.out.println(idReunion);
+
+				dos.writeInt(8);
+				dos.flush();
+
+				dos.writeUTF("aceptada");
+
+				dos.writeInt(idReunion);
+
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void mDenegarEstado() {
+
+		try {
+			int column = 1;
+			int row = this.vistaPrincipal.getPanelReunionesPendientes().getTable().getSelectedRow();
+
+			if (row != -1) {
+
+				int idReunion = (int) this.vistaPrincipal.getPanelReunionesPendientes().getTable().getModel()
+						.getValueAt(row, column);
+
+				System.out.println(idReunion);
+
+				dos.writeInt(8);
+				dos.flush();
+
+				dos.writeUTF("denegada");
+
+				dos.writeInt(idReunion);
+
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void mMostrarReunionesPendientes() {
+
+		try {
+
+			dos.writeInt(7);
+			dos.flush();
+
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReunionesPendientes().getTable()
+					.getModel();
+
+			modelo.setRowCount(0);
+
+			List<Object[]> listaReunionesPendientes = (List<Object[]>) ois.readObject();
+
+			for (Object[] reunion : listaReunionesPendientes) {
+
+				modelo.addRow(reunion);
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void mMostrarReuniones() {
+		try {
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
+					.getModel();
+
+			dos.writeInt(6);
+			dos.flush();
+
+			Thread.sleep(500);
+
+			String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
+
+			dos.writeInt(2);
+			dos.flush();
+
+			Thread.sleep(500);
+
+			String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
+
+			// Actualizar la tabla con los datos del horario
+			for (int i = 0; i < reuniones.length; i++) {
+				for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
+					if (!reuniones[i][j].isEmpty() && !horarioUser[i][j].isEmpty()) {
+						// Cambiar el estado a "conflicto"
+						String[] partes = reuniones[i][j].split("\\|");
+						if (partes.length > 1) {
+							partes[1] = "conflicto"; // Cambiar el estado
+							reuniones[i][j] = partes[0] + "|" + partes[1]; // Reasignar el valor
+						} else {
+							reuniones[i][j] += "|conflicto"; // Si no tiene estado, agregar "conflicto"
+						}
+					}
+
+					// Actualizar el modelo de la tabla
+					modelo.setValueAt(reuniones[i][j], i, j);
+				}
+			}
+
+			// Renderizador de colores para las celdas según estado
+			DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+				@Override
+				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+						boolean hasFocus, int row, int column) {
+					Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+							column);
+
+					if (column > 0 && value != null) { // Ignorar la columna de las horas
+						String texto = value.toString();
+						if (texto.contains("|")) {
+							String[] partes = texto.split("\\|");
+							String estado = partes[1];
+
+							if ("pendiente".equals(estado)) {
+								componente.setBackground(Color.YELLOW);
+								componente.setForeground(Color.BLACK);
+							} else if ("aceptada".equals(estado)) {
+								componente.setBackground(Color.GREEN);
+								componente.setForeground(Color.BLACK);
+							} else if ("denegada".equals(estado)) {
+								componente.setBackground(Color.RED);
+								componente.setForeground(Color.BLACK);
+							} else if ("conflicto".equals(estado)) {
+								componente.setBackground(Color.GRAY);
+								componente.setForeground(Color.BLACK);
+							}
+
+							// Mostrar solo el título, sin el estado
+							setText(partes[0]);
+						} else {
+							componente.setBackground(Color.WHITE);
+							componente.setForeground(Color.BLACK);
+						}
+					} else {
+						componente.setBackground(Color.WHITE);
+						componente.setForeground(Color.BLACK);
+					}
+
+					if (isSelected) {
+						componente.setBackground(Color.BLUE);
+						componente.setForeground(Color.WHITE);
+					}
+
+					return componente;
+				}
+			};
+
+			this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void desconectar() {
+
+		this.vistaPrincipal.getPanelLogin().getTfUser().setText("");
+		this.vistaPrincipal.getPanelLogin().getPfPass().setText("");
+	}
+
 	private void mCrearUsuario() {
-		
-		try {		
-			
+
+		try {
+
 			dos.writeInt(5);
-			dos.flush();			
-			
+			dos.flush();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,59 +431,54 @@ public class Controlador implements ActionListener {
 
 		try {
 
+			this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().removeAllItems();
+
 			dos.writeInt(3);
 			dos.flush();
 
-			List<Users> listaProfesores = (List<Users>) ois.readObject();
+			List<String> listaProfesores = (List<String>) ois.readObject();
 
-			for (Users profesor : listaProfesores) {
+			for (String profesor : listaProfesores) {
 
-				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor.getNombre());
+				this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addItem(profesor);
 			}
-			
-			 this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
-		            
-		            String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().getSelectedItem();
-		            
-		            for (Users users : listaProfesores) {
-						if(users.getNombre()==selectedProfesor) {
-							try {
-								
-								dos.writeInt(4);
-								dos.flush();
-								
-								dos.writeInt(users.getId());
-								dos.flush();
-								
-								String[][] horarioUser = (String[][]) ois.readObject(); 
-						        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
 
-						        
-						        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelOtrosHorarios().getTablaHorario().getModel();
+			this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores().addActionListener(e -> {
 
-						        for (int i = 0; i < horarioUser.length; i++) {
-						            for (int j = 1; j < horarioUser[i].length; j++) { 
-						                modelo.setValueAt(horarioUser[i][j], i + 1, j);
-						            }
-						        }
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (ClassNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+				String selectedProfesor = (String) this.vistaPrincipal.getPanelOtrosHorarios().getComboBoxProfesores()
+						.getSelectedItem();
+
+				for (String profesor : listaProfesores) {
+					if (profesor == selectedProfesor) {
+						try {
+
+							dos.writeInt(4);
+							dos.flush();
+
+							dos.writeUTF(profesor);
+							dos.flush();
+
+							String[][] horarioUser = (String[][]) ois.readObject();
+							System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+
+							DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelOtrosHorarios()
+									.getTablaHorario().getModel();
+
+							for (int i = 0; i < horarioUser.length; i++) {
+								for (int j = 1; j < horarioUser[i].length; j++) {
+									modelo.setValueAt(horarioUser[i][j], i, j);
+								}
 							}
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
 					}
-		            
-		            
-		            
-		        });
-			
-			
-			 
-			 
-			
+				}
+			});
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -267,66 +489,65 @@ public class Controlador implements ActionListener {
 		}
 
 	}
-	
-	
-	
+
 	private void mMostrarHorarios() {
-	    try {
-	        dos.writeInt(2); 
-	        dos.flush();
-	        
+		try {
+			dos.writeInt(2);
+			dos.flush();
 
-	        Thread.sleep(500); 
+			Thread.sleep(500);
 
-	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
-	        System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
+			String[][] horarioUser = (String[][]) ois.readObject(); // Leer el objeto
+			System.out.println("Horario recibido: " + Arrays.deepToString(horarioUser));
 
-	        // Actualizar la tabla con los datos del horario
-	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelHorario().getTablaHorario().getModel();
+			// Actualizar la tabla con los datos del horario
+			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelHorario().getTablaHorario()
+					.getModel();
 
-	        for (int i = 0; i < horarioUser.length; i++) {
-	            for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
-	                modelo.setValueAt(horarioUser[i][j], i + 1, j);
-	            }
-	        }
-	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
-	        e.printStackTrace();
-	    }
+			for (int i = 0; i < horarioUser.length; i++) {
+				for (int j = 1; j < horarioUser[i].length; j++) { // Ignorar la columna de las horas
+					modelo.setValueAt(horarioUser[i][j], i, j);
+				}
+			}
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
-
 
 	private void mConfirmarLogin(enumAcciones accion) {
 		// TODO Auto-generated method stub
-				try {
-					dos.writeInt(1);
-					dos.flush();
-					dos.writeUTF(this.vistaPrincipal.getPanelLogin().getTfUser().getText());
-					dos.flush();
-					dos.writeUTF(new String(this.vistaPrincipal.getPanelLogin().getPfPass().getPassword()));
-					dos.flush();
-					dos.writeUTF(TIPO_USUARIO);
-					dos.flush();
-					loginCorrecto = dis.readBoolean();
-					
-					
-					
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		try {
+			dos.writeInt(1);
+			dos.flush();
+			dos.writeUTF(this.vistaPrincipal.getPanelLogin().getTfUser().getText());
+			dos.flush();
+			dos.writeUTF(new String(this.vistaPrincipal.getPanelLogin().getPfPass().getPassword()));
+			dos.flush();
+			dos.writeUTF(TIPO_USUARIO);
+			dos.flush();
+			
+			loginCorrecto = dis.readBoolean();
 
-				if (loginCorrecto) {
-					
-					this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
-					
-				} else {
-					JOptionPane.showMessageDialog(null, "Login incorrecto");
-				}
+			int id = dis.readInt();
+			
+			String tipoUsuario = dis.readUTF();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (loginCorrecto) {
+
+			this.vistaPrincipal.mVisualizarPaneles(enumAcciones.CARGAR_PANEL_MENU);
+			conexionActiva = true;
+
+		} else {
+			JOptionPane.showMessageDialog(null, "Login incorrecto");
+		}
 	}
 
-	private synchronized void desconectar() {
+	private synchronized void cerrarVentana() {
 		// Verifica si la conexión ya está inactiva
 		if (!conexionActiva) {
 			return; // Si la conexión ya está cerrada, no hacer nada
@@ -369,7 +590,5 @@ public class Controlador implements ActionListener {
 		dis = null;
 		socketCliente = null;
 	}
-
-	
 
 }
