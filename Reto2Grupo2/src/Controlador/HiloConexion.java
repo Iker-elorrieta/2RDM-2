@@ -160,13 +160,13 @@ public class HiloConexion extends Thread {
 
 		try {
 
-			List<Reuniones> reunionesPendientes = new Reuniones().obtenerReunionesPendientes();
+			List<Reuniones> reunionesPendientesYConflicto = new Reuniones().obtenerReunionesPendientes();
 
-			List<Object[]> listaReunionesPendientes = new ArrayList<>();
+			List<Object[]> listaReunionesPendientesYConflicto = new ArrayList<>();
 
-			for (Reuniones reunion : reunionesPendientes) {
+			for (Reuniones reunion : reunionesPendientesYConflicto) {
 
-				listaReunionesPendientes.add(new Object[] {
+				listaReunionesPendientesYConflicto.add(new Object[] {
 						reunion.getEstado() != null && !reunion.getEstado().isEmpty() ? reunion.getEstado()
 								: "Campo vacío",
 						reunion.getIdReunion() != null ? reunion.getIdReunion() : "Campo vacío",
@@ -185,7 +185,7 @@ public class HiloConexion extends Thread {
 
 			}
 
-			oos.writeObject(listaReunionesPendientes);
+			oos.writeObject(listaReunionesPendientesYConflicto);
 			oos.flush();
 
 		} catch (IOException e) {
@@ -207,6 +207,8 @@ public class HiloConexion extends Thread {
 			for (Reuniones reunion : reunionesUser) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 				LocalDateTime fechaHora = LocalDateTime.parse(reunion.getFecha().toString(), formatter);
+				
+				
 
 				int dia = fechaHora.getDayOfWeek().getValue();
 				int hora = fechaHora.getHour();
@@ -231,7 +233,9 @@ public class HiloConexion extends Thread {
 				}
 
 				if (hora >= 1 && hora <= 5 && dia >= 1 && dia <= 5) {
+					
 					String tituloConEstado = reunion.getTitulo() + "|" + reunion.getEstado();
+					System.out.println(tituloConEstado);
 					horarioReuniones[hora - 1][dia] = tituloConEstado;
 				}
 			}

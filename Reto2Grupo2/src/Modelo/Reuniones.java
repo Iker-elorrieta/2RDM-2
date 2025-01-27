@@ -191,7 +191,7 @@ public class Reuniones implements java.io.Serializable {
 		
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
-		String hql = "from Reuniones where estado = 'pendiente'";
+		String hql = "from Reuniones where estado = 'pendiente' OR estado = 'conflicto'";
 		Query q = sesion.createQuery(hql);
 		List<?> listaReuniones = q.list();
 		

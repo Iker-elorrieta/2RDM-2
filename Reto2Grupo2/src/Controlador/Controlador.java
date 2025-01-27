@@ -316,97 +316,116 @@ public class Controlador implements ActionListener {
 	}
 
 	private void mMostrarReuniones() {
-		try {
-			DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
-					.getModel();
+	    try {
+	        DefaultTableModel modelo = (DefaultTableModel) this.vistaPrincipal.getPanelReuniones().getTablaHorario()
+	                .getModel();
 
-			dos.writeInt(6);
-			dos.flush();
+	        // Solicitar datos de reuniones
+	        dos.writeInt(6);
+	        dos.flush();
 
-			Thread.sleep(500);
+	        Thread.sleep(500);
 
-			String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
+	        String[][] reuniones = (String[][]) ois.readObject(); // Leer las reuniones
 
-			dos.writeInt(2);
-			dos.flush();
+	        // Solicitar datos del horario del usuario
+	        dos.writeInt(2);
+	        dos.flush();
 
-			Thread.sleep(500);
+	        Thread.sleep(500);
 
-			String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
+	        String[][] horarioUser = (String[][]) ois.readObject(); // Leer el horario
 
-			// Actualizar la tabla con los datos del horario
-			for (int i = 0; i < reuniones.length; i++) {
-				for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
-					if (!reuniones[i][j].isEmpty() && !horarioUser[i][j].isEmpty()) {
-						// Cambiar el estado a "conflicto"
-						String[] partes = reuniones[i][j].split("\\|");
-						if (partes.length > 1) {
-							partes[1] = "conflicto"; // Cambiar el estado
-							reuniones[i][j] = partes[0] + "|" + partes[1]; // Reasignar el valor
-						} else {
-							reuniones[i][j] += "|conflicto"; // Si no tiene estado, agregar "conflicto"
-						}
-					}
+	        // Actualizar la tabla con los datos combinados de reuniones y horarioUser
+	        for (int i = 0; i < reuniones.length; i++) {
+	            for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
 
-					// Actualizar el modelo de la tabla
-					modelo.setValueAt(reuniones[i][j], i, j);
-				}
-			}
+	                // Combinamos los datos de reuniones y horarioUser en la misma celda
+	                String celdaReuniones = reuniones[i][j];
+	                String celdaHorario = horarioUser[i][j];
 
-			// Renderizador de colores para las celdas según estado
-			DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
-				@Override
-				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-						boolean hasFocus, int row, int column) {
-					Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-							column);
+	                String contenidoFinal = "";
 
-					if (column > 0 && value != null) { // Ignorar la columna de las horas
-						String texto = value.toString();
-						if (texto.contains("|")) {
-							String[] partes = texto.split("\\|");
-							String estado = partes[1];
+	                if (!celdaReuniones.isEmpty() && !celdaHorario.isEmpty()) {
+	                    // Si hay datos en ambos, separarlos con una barra
+	                    contenidoFinal = celdaReuniones + " / " + celdaHorario;
+	                } else if (!celdaReuniones.isEmpty()) {
+	                    contenidoFinal = celdaReuniones; // Solo datos de reuniones
+	                } else if (!celdaHorario.isEmpty()) {
+	                    contenidoFinal = celdaHorario; // Solo datos de horarioUser
+	                }
 
-							if ("pendiente".equals(estado)) {
-								componente.setBackground(Color.YELLOW);
-								componente.setForeground(Color.BLACK);
-							} else if ("aceptada".equals(estado)) {
-								componente.setBackground(Color.GREEN);
-								componente.setForeground(Color.BLACK);
-							} else if ("denegada".equals(estado)) {
-								componente.setBackground(Color.RED);
-								componente.setForeground(Color.BLACK);
-							} else if ("conflicto".equals(estado)) {
-								componente.setBackground(Color.GRAY);
-								componente.setForeground(Color.BLACK);
-							}
+	                // Actualizar el modelo de la tabla
+	                modelo.setValueAt(contenidoFinal, i, j);
+	            }
+	        }
 
-							// Mostrar solo el título, sin el estado
-							setText(partes[0]);
-						} else {
-							componente.setBackground(Color.WHITE);
-							componente.setForeground(Color.BLACK);
-						}
-					} else {
-						componente.setBackground(Color.WHITE);
-						componente.setForeground(Color.BLACK);
-					}
+	        // Renderizador de colores para las celdas según estado (solo reuniones)
+	        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+	            @Override
+	            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+	                    boolean hasFocus, int row, int column) {
+	                Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+	                        column);
 
-					if (isSelected) {
-						componente.setBackground(Color.BLUE);
-						componente.setForeground(Color.WHITE);
-					}
+	                if (column > 0 && value != null) { // Ignorar la columna de las horas
+	                    String texto = value.toString();
+	                    if (texto.contains("|")) {
+	                        String[] partes = texto.split("\\|");
+	                        String estado = partes[1];
 
-					return componente;
-				}
-			};
+	                        // Configurar colores según el estado de reuniones
+	                        switch (estado) {
+	                            case "pendiente":
+	                                componente.setBackground(Color.YELLOW);
+	                                componente.setForeground(Color.BLACK);
+	                                break;
+	                            case "aceptada":
+	                                componente.setBackground(Color.GREEN);
+	                                componente.setForeground(Color.BLACK);
+	                                break;
+	                            case "denegada":
+	                                componente.setBackground(Color.RED);
+	                                componente.setForeground(Color.BLACK);
+	                                break;
+	                            case "conflicto":
+	                                componente.setBackground(Color.GRAY);
+	                                componente.setForeground(Color.BLACK);
+	                                break;
+	                            default:
+	                                componente.setBackground(Color.WHITE);
+	                                componente.setForeground(Color.BLACK);
+	                                break;
+	                        }
 
-			this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+	                        // Mostrar solo el título, sin el estado
+	                        setText(partes[0]);
+	                    } else {
+	                        componente.setBackground(Color.WHITE);
+	                        componente.setForeground(Color.BLACK);
+	                    }
+	                } else {
+	                    componente.setBackground(Color.WHITE);
+	                    componente.setForeground(Color.BLACK);
+	                }
 
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
-			e.printStackTrace();
-		}
+	                if (isSelected) {
+	                    componente.setBackground(Color.BLUE);
+	                    componente.setForeground(Color.WHITE);
+	                }
+
+	                return componente;
+	            }
+	        };
+
+	        // Asignar el renderizador a la tabla
+	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+
+	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 	private void desconectar() {
 
