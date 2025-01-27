@@ -26,6 +26,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import Modelo.Users;
 import Vista.PanelLogin;
 import Vista.VentanaPrincipal;
 import Vista.VentanaPrincipal.enumAcciones;
@@ -181,6 +182,7 @@ public class Controlador implements ActionListener {
 		switch (accion) {
 		case LOGIN:
 			this.mConfirmarLogin(accion);
+			
 			break;
 		case CARGAR_PANEL_LOGIN:
 			this.vistaPrincipal.mVisualizarPaneles(accion);
@@ -224,6 +226,8 @@ public class Controlador implements ActionListener {
 
 		}
 	}
+	
+
 
 	private void mAceptarEstado() {
 
@@ -522,8 +526,13 @@ public class Controlador implements ActionListener {
 			dos.flush();
 			dos.writeUTF(TIPO_USUARIO);
 			dos.flush();
+			
 			loginCorrecto = dis.readBoolean();
 
+			int id = dis.readInt();
+			
+			String tipoUsuario = dis.readUTF();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

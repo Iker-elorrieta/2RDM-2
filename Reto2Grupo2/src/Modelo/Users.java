@@ -208,6 +208,18 @@ public class Users implements java.io.Serializable {
 				+ reunionesesForProfesorId + ", reunionesesForAlumnoId=" + reunionesesForAlumnoId + ", horarioses="
 				+ horarioses + "]";
 	}
+	
+	public Users mObtenerUsuarioPorID(int userId) {
+	    SessionFactory sf = HibernateUtil.getSessionFactory();
+	    Session sesion = sf.openSession();
+	    String hql = "from Users where id = :userId";
+	    Query q = sesion.createQuery(hql);
+	    q.setParameter("userId", userId);
+	    Users user = (Users) q.uniqueResult();
+	    sesion.close(); 
+	    return user;
+	}
+
 
 	public Users mObtenerUsuario(String userIntroducido, String passIntroducida, String tipoUsuario) {
 		SessionFactory sf = HibernateUtil.getSessionFactory();

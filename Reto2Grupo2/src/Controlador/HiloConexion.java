@@ -63,6 +63,9 @@ public class HiloConexion extends Thread {
 					case 8:
 						actualizarEstado(dis, dos);
 						break;
+					case 9:
+						obtenerDatosUsuario(dis,oos);
+						break;
 					case -1:
 						System.out.println("Cliente solicitó desconexión.");
 						continuar = false;
@@ -88,6 +91,29 @@ public class HiloConexion extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void obtenerDatosUsuario(DataInputStream dis, ObjectOutputStream oos) {
+		
+		try {
+			
+			int id = dis.readInt();
+			
+			Users datosUsuario =  userLogeado.mObtenerUsuarioPorID(id); 
+			
+			oos.writeObject(datosUsuario);
+			oos.flush();
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 	}
 
 	private void actualizarEstado(DataInputStream dis, DataOutputStream dos) {
@@ -242,18 +268,38 @@ public class HiloConexion extends Thread {
 			String pass = dis.readUTF();
 
 			String tipoUsuario = dis.readUTF();
+			
+			
 
 			userLogeado = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
+			
+			
 
 			if (userLogeado != null) {
 				loginCorrecto = true;
 				dos.writeBoolean(loginCorrecto);
 				dos.flush();
+				dos.writeInt(userLogeado.getId());
+				dos.flush();
+				
+				if(userLogeado.getTipos().getId() == 3) {
+					dos.writeUTF("Profesor");
+					dos.flush();
+				}else if(userLogeado.getTipos().getId() == 4) {
+					dos.writeUTF("Alumno");
+					dos.flush();
+				}
+				
 			} else {
-
+				
 				dos.writeBoolean(loginCorrecto);
 				dos.flush();
-
+				
+				dos.writeInt(-1);
+				dos.flush();
+				
+				dos.writeUTF("");
+				dos.flush();
 			}
 
 		} catch (IOException e) {
