@@ -181,8 +181,7 @@ public class Controlador implements ActionListener {
 
 		switch (accion) {
 		case LOGIN:
-			this.mConfirmarLogin(accion);
-			
+			this.mConfirmarLogin(accion);		
 			break;
 		case CARGAR_PANEL_LOGIN:
 			this.vistaPrincipal.mVisualizarPaneles(accion);

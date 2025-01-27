@@ -58,7 +58,7 @@ public class HiloConexion extends Thread {
 						cargarReunionesProfesorLogeado(ois, oos);
 						break;
 					case 7:
-						cargarReunionesPendientes(ois, oos);
+						cargarReunionesPendientesYConflicto(ois, oos);
 						break;
 					case 8:
 						actualizarEstado(dis, dos);
@@ -66,6 +66,8 @@ public class HiloConexion extends Thread {
 					case 9:
 						obtenerDatosUsuario(dis,oos);
 						break;
+					case 10:
+						obtenerAlumnos(oos);
 					case -1:
 						System.out.println("Cliente solicitó desconexión.");
 						continuar = false;
@@ -93,13 +95,29 @@ public class HiloConexion extends Thread {
 		}
 	}
 
+	private void obtenerAlumnos(ObjectOutputStream oos) {
+		// TODO Auto-generated method stub
+		
+		try {
+			
+			List<Users> listaAlumnos = new Users().mObtenerAlumnos();
+			oos.writeObject(listaAlumnos);
+			oos.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 	private void obtenerDatosUsuario(DataInputStream dis, ObjectOutputStream oos) {
 		
 		try {
 			
 			int id = dis.readInt();
 			
-			Users datosUsuario =  userLogeado.mObtenerUsuarioPorID(id); 
+			Users datosUsuario =  new Users().mObtenerUsuarioPorID(id); 
 			
 			oos.writeObject(datosUsuario);
 			oos.flush();
@@ -137,7 +155,7 @@ public class HiloConexion extends Thread {
 		
 	}
 
-	private void cargarReunionesPendientes(ObjectInputStream ois, ObjectOutputStream oos) {
+	private void cargarReunionesPendientesYConflicto(ObjectInputStream ois, ObjectOutputStream oos) {
 		// TODO Auto-generated method stub
 
 		try {
