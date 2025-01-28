@@ -30,33 +30,17 @@ public class PanelReuniones extends JPanel {
 		setBounds(100, 100, 707, 584);
 
 		// Crear la tabla con el modelo inicial
-		tablaHorario = new JTable(generarModeloTabla()) {
-			// Usar un JTextArea como renderizador para las celdas
-			@Override
-			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-				Component c = super.prepareRenderer(renderer, row, column);
-				if (c instanceof JTextArea) {
-					((JTextArea) c).setLineWrap(true); // Habilitar salto de línea
-					((JTextArea) c).setWrapStyleWord(true); // Ajustar por palabras
-				}
-				return c;
-			}
-		};
+		tablaHorario = new JTable(generarModeloTabla());
 
-		// Configuración básica de la tabla
-		tablaHorario.setRowHeight(65); // Ajusta la altura de las filas (más espacio para texto en varias líneas)
+		tablaHorario.setRowHeight(65); 
 
-		// Configuración del renderizador para todas las columnas
-		tablaHorario.setDefaultRenderer(Object.class, new TextAreaRenderer());
-
-		// Envolver la tabla en un JScrollPane
 		JScrollPane scrollPane = new JScrollPane(tablaHorario);
-		scrollPane.setBounds(10, 154, 637, 320);
+		scrollPane.setBounds(10, 111, 641, 392);
 		add(scrollPane);
 
 		btnVolver = new JButton("Volver");
 		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnVolver.setBounds(31, 470, 101, 25);
+		btnVolver.setBounds(30, 514, 101, 25);
 		add(btnVolver);
 
 		JLabel lblNewLabel = new JLabel("REUNIONES");
@@ -67,7 +51,7 @@ public class PanelReuniones extends JPanel {
 
 		btnReunionesPendientes = new JButton("Reuniones pendientes");
 		btnReunionesPendientes.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnReunionesPendientes.setBounds(261, 470, 203, 25);
+		btnReunionesPendientes.setBounds(258, 514, 203, 25);
 		add(btnReunionesPendientes);
 
 	}
@@ -105,21 +89,6 @@ public class PanelReuniones extends JPanel {
 		return modeloTabla;
 	}
 
-	// Renderizador personalizado para usar JTextArea en las celdas
-	private static class TextAreaRenderer extends JTextArea implements TableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		public TextAreaRenderer() {
-			setLineWrap(true); // Habilitar salto de línea
-			setWrapStyleWord(true); // Ajustar por palabras
-		}
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-				int row, int column) {
-			setText(value != null ? value.toString() : ""); // Asignar el valor a la celda
-			return this;
-		}
-	}
+	
+	
 }

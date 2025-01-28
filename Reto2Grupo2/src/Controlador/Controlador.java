@@ -23,8 +23,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import Modelo.Users;
 import Vista.PanelLogin;
@@ -314,6 +316,84 @@ public class Controlador implements ActionListener {
 		}
 
 	}
+	
+	private static class TextAreaRenderer extends JTextArea implements TableCellRenderer {
+
+	    private static final long serialVersionUID = 1L;
+
+	    public TextAreaRenderer() {
+	        setLineWrap(true); // Habilitar salto de línea
+	        setWrapStyleWord(true); // Ajustar por palabras
+	        setOpaque(true); // Asegurarse de que el fondo se dibuje correctamente
+	    }
+
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+	                                                   int row, int column) {
+	        String texto = (value != null ? value.toString().trim() : ""); // Eliminar espacios y obtener el valor
+	        System.out.println("Texto en celda: '" + texto + "'"); // Para depuración
+
+	        setText(texto); // Asignar el valor a la celda
+
+	        // Verificar si la celda contiene una reunión
+	        if (column > 0 && !texto.isEmpty()) { // Ignorar la columna de las horas
+	            if (texto.contains("|")) {
+	                String[] partes = texto.split("\\|");
+	                String estado = "conflicto"; // Valor predeterminado en caso de que no haya un estado
+
+	                // Verificar si el texto tiene más de un elemento después del split
+	                if (partes.length > 1) {
+	                    estado = partes[1]; // Obtener el estado si existe
+	                }
+	                
+	                System.out.println("Estado: " + estado); // Para depuración
+
+	                // Configurar colores según el estado de reuniones
+	                switch (estado) {
+	                    case "pendiente":
+	                        setBackground(Color.YELLOW);
+	                        setForeground(Color.BLACK);
+	                        break;
+	                    case "aceptada":
+	                        setBackground(Color.GREEN);
+	                        setForeground(Color.BLACK);
+	                        break;
+	                    case "denegada":
+	                        setBackground(Color.RED);
+	                        setForeground(Color.BLACK);
+	                        break;
+	                    case "conflicto":
+	                        setBackground(Color.GRAY);
+	                        setForeground(Color.BLACK);
+	                        break;
+	                    default:
+	                        setBackground(Color.WHITE);
+	                        setForeground(Color.BLACK);
+	                        break;
+	                }
+
+	                // Mostrar solo el título, sin el estado
+	                setText(partes[0]);
+	            } else {
+	                // Si no es una reunión (solo clase), mantener fondo blanco
+	                setBackground(Color.WHITE);
+	                setForeground(Color.BLACK);
+	            }
+	        } else {
+	            // Si no hay texto, mantener fondo blanco
+	            setBackground(Color.WHITE);
+	            setForeground(Color.BLACK);
+	        }
+
+	        // Si la celda está seleccionada, cambiar los colores de fondo y texto
+	        if (isSelected) {
+	            setBackground(Color.BLUE);
+	            setForeground(Color.WHITE);
+	        }
+
+	        return this;
+	    }
+	}
 
 	private void mMostrarReuniones() {
 	    try {
@@ -347,14 +427,23 @@ public class Controlador implements ActionListener {
 	                boolean tieneReunion = !celdaReuniones.isEmpty();
 	                boolean tieneAsignatura = !celdaHorario.isEmpty();
 
-	                if (tieneReunion && tieneAsignatura) {
-	                    // Si hay reunión y asignatura, separarlas con un salto de línea
-	                    contenidoFinal = celdaReuniones + "\n" + celdaHorario;
-
+	                // Si hay una reunión, procesarla
+	                if (tieneReunion) {
 	                    // Si la reunión no tiene estado, marcarla como conflicto
 	                    if (!celdaReuniones.contains("|")) {
-	                        reuniones[i][j] += "|conflicto";
+	                        reuniones[i][j] += "|conflicto"; // Asegurarse de agregar un estado por defecto
 	                    }
+
+	                    // Si la reunión es "pendiente" y hay asignatura, cambiar estado a "conflicto"
+	                    if (celdaReuniones.contains("|pendiente") && tieneAsignatura) {
+	                        // Cambiar el estado a "conflicto" si tiene asignatura y estado pendiente
+	                        reuniones[i][j] = celdaReuniones.split("\\|")[0] + "|conflicto";
+	                    }
+	                }
+
+	                // Si hay reunión y asignatura, separarlas con un salto de línea
+	                if (tieneReunion && tieneAsignatura) {
+	                    contenidoFinal = celdaReuniones + "\n" + celdaHorario;
 	                } else if (tieneReunion) {
 	                    contenidoFinal = celdaReuniones;
 	                } else if (tieneAsignatura) {
@@ -366,71 +455,18 @@ public class Controlador implements ActionListener {
 	            }
 	        }
 
-	        // Renderizador de colores para las celdas según estado (solo reuniones)
-	        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
-	            @Override
-	            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-	                    boolean hasFocus, int row, int column) {
-	                Component componente = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-	                        column);
-
-	                if (column > 0 && value != null) { // Ignorar la columna de las horas
-	                    String texto = value.toString();
-	                    if (texto.contains("|")) {
-	                        String[] partes = texto.split("\\|");
-	                        String estado = partes[1];
-
-	                        // Configurar colores según el estado de reuniones
-	                        switch (estado) {
-	                            case "pendiente":
-	                                componente.setBackground(Color.YELLOW);
-	                                componente.setForeground(Color.BLACK);
-	                                break;
-	                            case "aceptada":
-	                                componente.setBackground(Color.GREEN);
-	                                componente.setForeground(Color.BLACK);
-	                                break;
-	                            case "denegada":
-	                                componente.setBackground(Color.RED);
-	                                componente.setForeground(Color.BLACK);
-	                                break;
-	                            case "conflicto":
-	                                componente.setBackground(Color.GRAY);
-	                                componente.setForeground(Color.BLACK);
-	                                break;
-	                            default:
-	                                componente.setBackground(Color.WHITE);
-	                                componente.setForeground(Color.BLACK);
-	                                break;
-	                        }
-
-	                        // Mostrar solo el título, sin el estado
-	                        setText(partes[0]);
-	                    } else {
-	                        componente.setBackground(Color.WHITE);
-	                        componente.setForeground(Color.BLACK);
-	                    }
-	                } else {
-	                    componente.setBackground(Color.WHITE);
-	                    componente.setForeground(Color.BLACK);
-	                }
-
-	                if (isSelected) {
-	                    componente.setBackground(Color.BLUE);
-	                    componente.setForeground(Color.WHITE);
-	                }
-
-	                return componente;
-	            }
-	        };
-
-	        // Asignar el renderizador ANTES de modificar el modelo
-	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
+	        // Asignar el renderizador con la lógica de color a la tabla
+	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, new TextAreaRenderer());
 
 	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
 	        e.printStackTrace();
 	    }
 	}
+
+
+
+
+
 
 
 

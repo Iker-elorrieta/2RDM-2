@@ -242,8 +242,8 @@ public class HiloConexion extends Thread {
 
 				if (hora >= 1 && hora <= 5 && dia >= 1 && dia <= 5) {
 
-					String tituloConEstado = reunion.getTitulo();
-					System.out.println(tituloConEstado);
+					String tituloConEstado = reunion.getTitulo() + "|" + reunion.getEstado();
+					
 					horarioReuniones[hora - 1][dia] = tituloConEstado;
 				}
 			}
