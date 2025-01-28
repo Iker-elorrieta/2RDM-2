@@ -57,7 +57,7 @@ public class Horarios implements java.io.Serializable {
 	
 	public String[][] obtenerHorarioPorId(int userId) {
 		String[][] horarioSemanal = { { "", "", "", "", "", "" }, { "", "", "", "", "", "" },
-				{ "", "", "", "", "", "" }, { "", "", "", "", "", "" }, { "", "", "", "", "", "" } };
+				{ "", "", "", "", "", "" }, { "", "", "", "", "", "" }, { "", "", "", "", "", "" }, { "", "", "", "", "", "" }};
 
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
