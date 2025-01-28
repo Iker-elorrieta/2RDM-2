@@ -340,19 +340,25 @@ public class Controlador implements ActionListener {
 	        for (int i = 0; i < reuniones.length; i++) {
 	            for (int j = 1; j < reuniones[i].length; j++) { // Ignorar la columna de las horas
 
-	                // Combinamos los datos de reuniones y horarioUser en la misma celda
 	                String celdaReuniones = reuniones[i][j];
 	                String celdaHorario = horarioUser[i][j];
-
 	                String contenidoFinal = "";
 
-	                if (!celdaReuniones.isEmpty() && !celdaHorario.isEmpty()) {
-	                    // Si hay datos en ambos, separarlos con una barra
-	                    contenidoFinal = celdaReuniones + " / " + celdaHorario;
-	                } else if (!celdaReuniones.isEmpty()) {
-	                    contenidoFinal = celdaReuniones; // Solo datos de reuniones
-	                } else if (!celdaHorario.isEmpty()) {
-	                    contenidoFinal = celdaHorario; // Solo datos de horarioUser
+	                boolean tieneReunion = !celdaReuniones.isEmpty();
+	                boolean tieneAsignatura = !celdaHorario.isEmpty();
+
+	                if (tieneReunion && tieneAsignatura) {
+	                    // Si hay reunión y asignatura, separarlas con un salto de línea
+	                    contenidoFinal = celdaReuniones + "\n" + celdaHorario;
+
+	                    // Si la reunión no tiene estado, marcarla como conflicto
+	                    if (!celdaReuniones.contains("|")) {
+	                        reuniones[i][j] += "|conflicto";
+	                    }
+	                } else if (tieneReunion) {
+	                    contenidoFinal = celdaReuniones;
+	                } else if (tieneAsignatura) {
+	                    contenidoFinal = celdaHorario;
 	                }
 
 	                // Actualizar el modelo de la tabla
@@ -418,13 +424,15 @@ public class Controlador implements ActionListener {
 	            }
 	        };
 
-	        // Asignar el renderizador a la tabla
+	        // Asignar el renderizador ANTES de modificar el modelo
 	        this.vistaPrincipal.getPanelReuniones().getTablaHorario().setDefaultRenderer(Object.class, renderizador);
 
 	    } catch (IOException | ClassNotFoundException | InterruptedException e) {
 	        e.printStackTrace();
 	    }
 	}
+
+
 
 
 	private void desconectar() {

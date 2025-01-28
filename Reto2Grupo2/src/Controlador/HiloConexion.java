@@ -64,10 +64,14 @@ public class HiloConexion extends Thread {
 						actualizarEstado(dis, dos);
 						break;
 					case 9:
-						obtenerDatosUsuario(dis,oos);
+						obtenerDatosUsuario(dis, oos);
 						break;
 					case 10:
 						obtenerAlumnos(oos);
+						break;
+					case 11:
+						obtenerProfesores(oos);
+						break;
 					case -1:
 						System.out.println("Cliente solicitó desconexión.");
 						continuar = false;
@@ -95,64 +99,70 @@ public class HiloConexion extends Thread {
 		}
 	}
 
+	private void obtenerProfesores(ObjectOutputStream oos) {
+
+		try {
+
+			List<Users> listaProfesores = new Users().mObtenerProfesores();
+			oos.writeObject(listaProfesores);
+			oos.flush();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	private void obtenerAlumnos(ObjectOutputStream oos) {
 		// TODO Auto-generated method stub
-		
+
 		try {
-			
+
 			List<Users> listaAlumnos = new Users().mObtenerAlumnos();
 			oos.writeObject(listaAlumnos);
 			oos.flush();
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void obtenerDatosUsuario(DataInputStream dis, ObjectOutputStream oos) {
-		
+
 		try {
-			
+
 			int id = dis.readInt();
-			
-			Users datosUsuario =  new Users().mObtenerUsuarioPorID(id); 
-			
+
+			Users datosUsuario = new Users().mObtenerUsuarioPorID(id);
+
 			oos.writeObject(datosUsuario);
 			oos.flush();
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
+
 	}
 
 	private void actualizarEstado(DataInputStream dis, DataOutputStream dos) {
-		
+
 		try {
-			
+
 			String estado = dis.readUTF();
-			
+
 			int idRunion = dis.readInt();
-			
+
 			new Reuniones().actualizarReunionesPorID(idRunion, estado);
-			
-			
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	private void cargarReunionesPendientesYConflicto(ObjectInputStream ois, ObjectOutputStream oos) {
@@ -207,8 +217,6 @@ public class HiloConexion extends Thread {
 			for (Reuniones reunion : reunionesUser) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 				LocalDateTime fechaHora = LocalDateTime.parse(reunion.getFecha().toString(), formatter);
-				
-				
 
 				int dia = fechaHora.getDayOfWeek().getValue();
 				int hora = fechaHora.getHour();
@@ -233,8 +241,8 @@ public class HiloConexion extends Thread {
 				}
 
 				if (hora >= 1 && hora <= 5 && dia >= 1 && dia <= 5) {
-					
-					String tituloConEstado = reunion.getTitulo() + "|" + reunion.getEstado();
+
+					String tituloConEstado = reunion.getTitulo();
 					System.out.println(tituloConEstado);
 					horarioReuniones[hora - 1][dia] = tituloConEstado;
 				}
@@ -257,7 +265,7 @@ public class HiloConexion extends Thread {
 			String[][] horarioUser;
 			int id = 0;
 
-			List<Users> listaProfesores = userLogeado.mObtenerProfesores(userLogeado.getId());
+			List<Users> listaProfesores = userLogeado.mObtenerProfesoresPorId(userLogeado.getId());
 
 			String nombreProfesorSeleccionado = dis.readUTF();
 
@@ -290,12 +298,8 @@ public class HiloConexion extends Thread {
 			String pass = dis.readUTF();
 
 			String tipoUsuario = dis.readUTF();
-			
-			
 
 			userLogeado = new Users().mObtenerUsuario(nombreUser, pass, tipoUsuario);
-			
-			
 
 			if (userLogeado != null) {
 				loginCorrecto = true;
@@ -303,23 +307,23 @@ public class HiloConexion extends Thread {
 				dos.flush();
 				dos.writeInt(userLogeado.getId());
 				dos.flush();
-				
-				if(userLogeado.getTipos().getId() == 3) {
+
+				if (userLogeado.getTipos().getId() == 3) {
 					dos.writeUTF("Profesor");
 					dos.flush();
-				}else if(userLogeado.getTipos().getId() == 4) {
+				} else if (userLogeado.getTipos().getId() == 4) {
 					dos.writeUTF("Alumno");
 					dos.flush();
 				}
-				
+
 			} else {
-				
+
 				dos.writeBoolean(loginCorrecto);
 				dos.flush();
-				
+
 				dos.writeInt(-1);
 				dos.flush();
-				
+
 				dos.writeUTF("");
 				dos.flush();
 			}
@@ -347,7 +351,7 @@ public class HiloConexion extends Thread {
 	private void cargarProfesores(ObjectInputStream ois, ObjectOutputStream oos, DataInputStream dis) {
 		try {
 			List<String> listaProfes = new ArrayList<String>();
-			List<Users> listaProfesores = userLogeado.mObtenerProfesores(userLogeado.getId());
+			List<Users> listaProfesores = userLogeado.mObtenerProfesoresPorId(userLogeado.getId());
 
 			for (Users user : listaProfesores) {
 

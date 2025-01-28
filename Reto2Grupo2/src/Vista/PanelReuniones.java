@@ -51,7 +51,7 @@ public class PanelReuniones extends JPanel {
 
 		// Envolver la tabla en un JScrollPane
 		JScrollPane scrollPane = new JScrollPane(tablaHorario);
-		scrollPane.setBounds(10, 121, 637, 320);
+		scrollPane.setBounds(10, 154, 637, 320);
 		add(scrollPane);
 
 		btnVolver = new JButton("Volver");
@@ -98,10 +98,9 @@ public class PanelReuniones extends JPanel {
 
 	private DefaultTableModel generarModeloTabla() {
 		DefaultTableModel modeloTabla = new DefaultTableModel(
-				new String[][] {  { "8:00-9:00", "", "", "", "", "" },
-						{ "9:00-10:00", "", "", "", "", "" }, { "10:00-11:00", "", "", "", "", "" },
-						{ "11:30-12:30", "", "", "", "", "" }, { "12:30-13:30", "", "", "", "", "" },
-						{ "13:30-14:30", "", "", "", "", "" }, },
+				new String[][] { { "8:00-9:00", "", "", "", "", "" }, { "9:00-10:00", "", "", "", "", "" },
+						{ "10:00-11:00", "", "", "", "", "" }, { "11:30-12:30", "", "", "", "", "" },
+						{ "12:30-13:30", "", "", "", "", "" }, { "13:30-14:30", "", "", "", "", "" }, },
 				new String[] { "Hora/Día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" });
 		return modeloTabla;
 	}

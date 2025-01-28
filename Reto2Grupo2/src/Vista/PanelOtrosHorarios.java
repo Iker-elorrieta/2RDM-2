@@ -10,8 +10,6 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-
-
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
@@ -25,6 +23,7 @@ public class PanelOtrosHorarios extends JPanel {
 	private JButton btnVolver;
 	private JTable tablaHorario;
 	private JComboBox comboBoxProfesores;
+
 	/**
 	 * Create the panel.
 	 */
@@ -42,12 +41,12 @@ public class PanelOtrosHorarios extends JPanel {
 		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnVolver.setBounds(10, 507, 101, 25);
 		add(btnVolver);
-		
+
 		comboBoxProfesores = new JComboBox();
 		comboBoxProfesores.setBounds(118, 101, 158, 22);
-		
+
 		add(comboBoxProfesores);
-		
+
 		// Crear la tabla con el modelo inicial
 		tablaHorario = new JTable(generarModeloTabla()) {
 			// Usar un JTextArea como renderizador para las celdas
@@ -64,7 +63,6 @@ public class PanelOtrosHorarios extends JPanel {
 
 		// Configuración básica de la tabla
 		tablaHorario.setRowHeight(65); // Ajusta la altura de las filas (más espacio para texto en varias líneas)
-		
 
 		// Configuración del renderizador para todas las columnas
 		tablaHorario.setDefaultRenderer(Object.class, new TextAreaRenderer());
@@ -76,8 +74,6 @@ public class PanelOtrosHorarios extends JPanel {
 
 	}
 
-	
-
 	public JButton getBtnVolver() {
 		return btnVolver;
 	}
@@ -85,57 +81,47 @@ public class PanelOtrosHorarios extends JPanel {
 	public void setBtnVolver(JButton btnVolver) {
 		this.btnVolver = btnVolver;
 	}
-	
-	
-	
+
 	public JTable getTablaHorario() {
 		return tablaHorario;
 	}
-
-
 
 	public void setTablaHorario(JTable tablaHorario) {
 		this.tablaHorario = tablaHorario;
 	}
 
-
-
 	public JComboBox getComboBoxProfesores() {
 		return comboBoxProfesores;
 	}
-
-
 
 	public void setComboBoxProfesores(JComboBox comboBoxProfesores) {
 		this.comboBoxProfesores = comboBoxProfesores;
 	}
 
-
-
 	private DefaultTableModel generarModeloTabla() {
 		DefaultTableModel modeloTabla = new DefaultTableModel(
-				new String[][] {{ "8:00-9:00", "", "", "", "", "" }, { "9:00-10:00", "", "", "", "", "" },
+				new String[][] { { "8:00-9:00", "", "", "", "", "" }, { "9:00-10:00", "", "", "", "", "" },
 						{ "10:00-11:00", "", "", "", "", "" }, { "11:30-12:30", "", "", "", "", "" },
 						{ "12:30-13:30", "", "", "", "", "" }, { "13:30-14:30", "", "", "", "", "" }, },
 				new String[] { "Hora/Día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" });
 		return modeloTabla;
 	}
-	
+
 	// Renderizador personalizado para usar JTextArea en las celdas
-			private static class TextAreaRenderer extends JTextArea implements TableCellRenderer {
+	private static class TextAreaRenderer extends JTextArea implements TableCellRenderer {
 
-				private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-				public TextAreaRenderer() {
-					setLineWrap(true); // Habilitar salto de línea
-					setWrapStyleWord(true); // Ajustar por palabras
-				}
+		public TextAreaRenderer() {
+			setLineWrap(true); // Habilitar salto de línea
+			setWrapStyleWord(true); // Ajustar por palabras
+		}
 
-				@Override
-				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-						boolean hasFocus, int row, int column) {
-					setText(value != null ? value.toString() : ""); // Asignar el valor a la celda
-					return this;
-				}
-			}
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			setText(value != null ? value.toString() : ""); // Asignar el valor a la celda
+			return this;
+		}
+	}
 }

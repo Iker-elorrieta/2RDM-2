@@ -236,6 +236,23 @@ public class Users implements java.io.Serializable {
 		}
 		return listaAlumnos;
 	}
+	
+	public List<Users> mObtenerProfesores() {
+		List<Users> listaProfesores = new ArrayList<Users>();
+		SessionFactory sf = HibernateUtil.getSessionFactory();
+		Session sesion = sf.openSession();
+
+		String hqlNombre = "FROM Users WHERE tipos.id = 3";
+		Query q = sesion.createQuery(hqlNombre);
+		List<?> filas = q.list();
+
+		for (Object res : filas) {
+			Users user = (Users) res;
+
+			listaProfesores.add(user);
+		}
+		return listaProfesores;
+	}
 
 
 	public Users mObtenerUsuario(String userIntroducido, String passIntroducida, String tipoUsuario) {
@@ -311,7 +328,7 @@ public class Users implements java.io.Serializable {
 
 
 
-	public List<Users> mObtenerProfesores(int userId) {
+	public List<Users> mObtenerProfesoresPorId(int userId) {
 		List<Users> listaProfesores = new ArrayList<Users>();
 		SessionFactory sf = HibernateUtil.getSessionFactory();
 		Session sesion = sf.openSession();
